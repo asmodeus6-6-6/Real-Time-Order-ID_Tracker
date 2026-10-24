@@ -1,0 +1,1120 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Real Time Order ID Tracker - Excel</title><style>
+:root{--bg:#e9edf0;--paper:#ffffff;--ink:#17212b;--muted:#5f6b75;--line:#cbd4dc;--gold:#107c41;--excel:#107c41;--excel-dark:#075e32;--excel-light:#e2f0e8;--blue:#d9eaf7}*{box-sizing:border-box}body{margin:0;background:#e9edf0;color:var(--ink);font:13px/1.4 "Aptos",Calibri,Arial,sans-serif}header{padding:20px clamp(16px,3vw,38px);background:linear-gradient(110deg,#075e32,#107c41 62%,#16864a);color:#fff;box-shadow:0 2px 5px #0002;border-bottom:4px solid #b6d9c4}header small{color:#d8f0df;letter-spacing:.08em;font-weight:bold}h1{margin:7px 0;font-size:clamp(25px,4vw,38px)}header p{margin:0;color:#e2f2e7}.wrap{max-width:1600px;margin:auto;padding:14px clamp(10px,2vw,24px)}.buttons{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}button{cursor:pointer;border:1px solid #b9c9c0;border-radius:3px;padding:9px 12px;background:linear-gradient(#fff,#f4f7f5);font-weight:600;color:#173b2a;box-shadow:0 1px 1px #0000000b}button:hover{background:#e8f4ec;border-color:#107c41}button.gold{background:linear-gradient(130deg,#e9ca7c,#bf8730);border-color:#bd8b3b}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.stat,.panel{background:var(--paper);border:1px solid var(--line);border-radius:15px;overflow:hidden}.stat{padding:14px}.stat small{color:var(--muted);font-weight:bold}.stat strong{display:block;font-size:26px;margin-top:4px}.layout{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1.15fr);gap:15px;align-items:start}.head{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center}.head h2{font-size:16px;margin:0}.head p{margin:3px 0 0;font-size:11px;color:var(--muted)}.body{padding:16px 18px}label{display:block;font-size:11px;font-weight:bold;margin:0 0 6px}textarea,select{width:100%;border:1px solid #dcd4c6;border-radius:9px;padding:11px;background:white;font:12px/1.5 Consolas,monospace;color:var(--ink)}textarea{min-height:330px;resize:vertical}.fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.help,.status{font-size:11px;color:var(--muted);margin-top:8px}.tablewrap{overflow:auto;max-height:580px}table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee7db}th{position:sticky;top:0;background:#eee4d0;color:#5f4c2c;font-size:10px;letter-spacing:.05em;text-transform:uppercase}td[contenteditable=true]{min-width:90px}tbody tr:hover{background:#fff8e8}.missing{color:#b54735}.badge{background:#f2e4c4;border-radius:8px;padding:4px 7px;font-weight:bold;font-size:11px}.preview{border:1px solid var(--line);border-radius:12px;padding:15px;background:white;overflow:auto}.preview h3{margin:0 0 3px}.preview p{font-size:10px;color:#777;margin:0 0 12px}.preview table th{position:static;background:#292c25;color:#f5df9d}.foot{text-align:center;color:#928b7d;font-size:10px;padding:22px}.notice{background:#f7efd9;border:1px solid #e7d4a6;padding:10px;border-radius:9px;font-size:11px;color:#6e5629;margin-top:12px}@media(max-width:900px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:500px){.fields{grid-template-columns:1fr}.body,.head{padding:13px}.buttons button{flex:1}}
+
+/* Spreadsheet-wide Excel inspired styling */
+*{scrollbar-color:#aeb9c1 #edf1f3}
+.panel,.card,.summary,.section,.analysis,.box{border-radius:4px!important;box-shadow:0 1px 2px #26374612!important}
+.panel{background:#fff!important;border:1px solid #c8d2d9!important}
+h2,h3{color:#145b35}
+table{border-collapse:collapse!important;background:#fff}
+th{background:#d9eadf!important;color:#163d29!important;font-weight:700;border:1px solid #b7c9bd!important}
+td{border:1px solid #d6dde2!important}
+tbody tr:nth-child(even){background:#f4f8f5}
+tbody tr:hover{background:#e8f3eb}
+input,textarea,select{border:1px solid #aebdc6!important;border-radius:3px!important;background:#fff;color:#17212b}
+input:focus,textarea:focus,select:focus{outline:2px solid #8fc7a4;outline-offset:0}
+button.primary,button.gold,.primary{background:#107c41!important;color:#fff!important;border-color:#0a6534!important}
+
+.image-export-actions{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;margin:14px auto;padding:10px;border:1px solid #c8d8ce;border-radius:6px;background:#f4f8f5}
+.image-export-actions button{background:#107c41!important;color:#fff!important;border:1px solid #075e32!important;border-radius:4px!important;padding:10px 16px!important;font-weight:700}
+.image-export-actions button:hover{background:#075e32!important}
+
+/* Conditional formatting for review and contribution values */
+.review-ok,.status-ok,.cell-good{background:#d9ead3!important;color:#137333!important}
+.review-warn,.status-warn,.cell-mid{background:#fff2cc!important;color:#9a6700!important}
+.review-bad,.status-bad,.cell-bad{background:#f4cccc!important;color:#b31412!important}
+
+.brandline{display:flex;align-items:center;gap:16px}
+.brandmark{width:58px;height:58px;flex:0 0 58px;filter:drop-shadow(0 4px 8px #001f1260);animation:logoFloat 3.2s ease-in-out infinite}
+.brandmark svg{width:100%;height:100%;animation:logoGlow 3.2s ease-in-out infinite;transform-origin:center}
+@keyframes logoFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-2deg)}}
+@keyframes logoGlow{0%,100%{filter:drop-shadow(0 0 0 rgba(255,215,119,0))}50%{filter:drop-shadow(0 0 9px rgba(255,215,119,.8))}}
+@media(prefers-reduced-motion:reduce){.brandmark,.brandmark svg{animation:none}}
+
+:root{
+ --bg:#e7e9eb;--paper:#ffffff;--ink:#202124;--muted:#5f6368;--line:#c8cdd2;
+ --excel:#217346;--excel-dark:#185c37;--excel-light:#e2f0e8;--excel-grey:#f3f4f5;
+}
+body{background:#e7e9eb!important;color:#202124!important;font-family:"Aptos","Segoe UI",Calibri,Arial,sans-serif!important}
+header{background:#f3f4f5!important;color:#202124!important;border-bottom:1px solid #c8cdd2!important;box-shadow:none!important;padding:0!important}
+header .brandline{padding:12px 22px;gap:12px;background:linear-gradient(#f7f8f9,#e8eaec);border-bottom:1px solid #c8cdd2}
+header .brandmark{width:42px;height:42px;flex-basis:42px;filter:none!important;animation:none!important}
+header .brandmark svg{animation:none!important;filter:none!important}
+header small{color:#217346!important;font-size:11px!important;letter-spacing:.08em!important}
+header h1{color:#202124!important;font-size:22px!important;font-weight:650!important;margin:2px 0!important}
+header p{color:#5f6368!important}
+header .brandline:after{content:"Abhijith Prasad";margin-left:auto;display:block;font-weight:600;color:#344054;padding:9px 13px 9px 42px;border:1px solid #c8cdd2;border-radius:5px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='4' fill='%23717378'/%3E%3Cpath d='M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7' fill='%23717378'/%3E%3C/svg%3E") no-repeat 12px center/22px}
+.wrap{max-width:1600px!important;padding:12px 18px!important}
+button{border-radius:3px!important;box-shadow:none!important;border-color:#c8cdd2!important;background:linear-gradient(#fff,#f2f3f4)!important;color:#202124!important}
+button:hover{background:#e6f1eb!important;border-color:#217346!important}
+button.gold,button.primary,.primary,button#process,button#process2{background:#217346!important;color:#fff!important;border-color:#185c37!important}
+.panel,.card,.summary,.section,.analysis,.box{border-radius:3px!important;box-shadow:none!important;border-color:#c8cdd2!important;background:#fff!important}
+h2,h3{color:#217346!important}
+table{border-collapse:collapse!important}
+th{background:#d9e7de!important;color:#174d31!important}
+td,th{border:1px solid #cbd2ce!important}
+tbody tr:nth-child(even){background:#f4f5f6!important}
+input,textarea,select{border-radius:2px!important;border-color:#b9c0c6!important;background:#fff!important}
+.sheet-tabs{display:flex;gap:0;align-items:center;background:#f0f1f2;border-top:1px solid #c8cdd2;margin-top:16px;padding:0 12px;min-height:42px}
+.sheet-tabs span{padding:11px 20px;border-right:1px solid #d1d5d9;color:#4c5358;font-weight:600}
+.sheet-tabs span.active{background:#fff;color:#217346;border-bottom:3px solid #217346}
+.excel-ribbon{background:#f7f8f9;border-bottom:1px solid #c8cdd2;padding:8px 14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.excel-ribbon .ribbon-group{display:flex;align-items:center;gap:6px;padding:2px 12px;border-right:1px solid #d3d7db;min-height:48px}
+.excel-ribbon .ribbon-group:last-child{border-right:0}
+.ribbon-icon{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:54px;font-size:11px;color:#343a40}
+.ribbon-icon svg{width:23px;height:23px;stroke:#217346;fill:none;stroke-width:1.7}
+
+
+/* Screenshot-matched Excel workbook UI */
+*{box-sizing:border-box}
+body{margin:0!important;background:#f4f6f7!important;color:#17212b!important;font-family:Calibri,"Aptos","Segoe UI",Arial,sans-serif!important;font-size:14px}
+.excel-titlebar{height:48px;background:#006b3c;color:#fff;display:flex;align-items:center;padding:0 18px;gap:10px;box-shadow:inset 0 -1px #005a32}
+.excel-appicon{width:28px;height:28px;flex:0 0 28px}.excel-appicon svg{width:100%;height:100%}
+.excel-titlebar strong{font-size:15px;font-weight:600;white-space:nowrap}.title-chevron{font-size:20px;color:#d6e9df}
+.excel-search{position:absolute;left:38%;width:25%;height:31px;border-radius:4px;background:#d9eee4;color:#1b5b3c;display:flex;align-items:center;gap:10px;padding:0 14px;font-size:19px}
+.excel-search span{font-size:13px;color:#4c6558}
+.title-right{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:12px}.toggle{width:42px;height:22px;background:#fff;border-radius:15px;display:inline-flex;align-items:center;padding:3px}.toggle i{display:block;width:16px;height:16px;background:#087b45;border-radius:50%;margin-left:auto}.window-btn{font-size:20px;width:34px;text-align:center;color:#e3f1e9}
+.excel-tabs{height:31px;background:#f8f9fa;border-bottom:1px solid #cbd0d4;display:flex;align-items:stretch;padding-left:14px;gap:0}
+.excel-tabs>span{padding:7px 15px 5px;font-size:13px;color:#303841;white-space:nowrap}
+.excel-tabs>span.selected{border-bottom:3px solid #107c41;font-weight:700}
+.excel-tabs .profile{margin-left:auto;display:flex;align-items:center;gap:8px;padding-right:20px;font-weight:600}
+.avatar{display:inline-flex;width:24px;height:24px;border-radius:50%;align-items:center;justify-content:center;background:#d9e9df;color:#12683d;font-size:10px}
+.excel-ribbon{min-height:94px;background:#f8f9fa;border-bottom:1px solid #cbd0d4;padding:6px 12px 4px;display:flex;align-items:stretch;gap:0;overflow:hidden}
+.excel-ribbon .ribbon-group{position:relative;display:flex;align-items:center;gap:9px;padding:2px 13px 16px;border-right:1px solid #d4d8dc;min-height:67px}
+.excel-ribbon .ribbon-group>small{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:10px;color:#4b535b}
+.ribbon-icon{min-width:49px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;text-align:center;color:#333b43;white-space:nowrap}
+.ribbon-icon svg{width:23px;height:23px;stroke:#217346;fill:none;stroke-width:1.7}
+.ribbon-icon.large svg{width:32px;height:32px}.ribbon-stack{display:flex;flex-direction:column;gap:4px}
+.ribbon-toolset{display:flex;flex-direction:column;gap:9px;min-width:130px}.font-select{display:block;border:1px solid #c7cdd2;border-radius:3px;background:white;padding:4px 8px;min-width:128px;font-size:12px}.font-select.small{min-width:45px;width:50px}.toolrow{display:flex;align-items:center;gap:12px;color:#323a42;font-size:13px;white-space:nowrap}
+main.wrap{max-width:none!important;width:100%;padding:12px 20px 0!important;margin:0!important}
+header{display:none!important}
+.buttons{display:flex;align-items:center;justify-content:flex-end;gap:9px;margin:0 0 12px!important;flex-wrap:wrap}
+.buttons button{height:42px;min-width:132px;border:1px solid #c5cdd1!important;background:linear-gradient(#fff,#f7f8f9)!important;border-radius:5px!important;font-size:13px;font-weight:600;color:#25332b!important;padding:0 15px!important}
+.buttons button.gold,.buttons #process{background:#087b45!important;color:#fff!important;border-color:#076838!important}
+.buttons #clear{color:#d93025!important}
+.btn-icon{font-size:20px;margin-right:8px;vertical-align:-2px}.btn-icon.green{color:#087b45}.btn-icon.red{color:#d93025}
+.stats{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px!important;margin-bottom:12px!important}
+.stat{min-height:67px;border-radius:6px!important;border:1px solid #cbd6d0!important;background:linear-gradient(100deg,#f4fbf6,#fff)!important;padding:10px 18px!important;box-shadow:none!important;position:relative}
+.stat:nth-child(2){background:linear-gradient(100deg,#f1f7ff,#fff)!important;border-color:#b7d5f6!important}
+.stat:nth-child(3){background:linear-gradient(100deg,#fff8ef,#fff)!important;border-color:#f2d4b8!important}
+.stat:nth-child(4){background:linear-gradient(100deg,#fff4f4,#fff)!important;border-color:#f0c8c8!important}
+.stat small{font-size:13px!important;font-weight:600;color:#1d5839!important}.stat strong{font-size:26px!important;color:#087b45!important;line-height:1.15}
+.layout{display:grid!important;grid-template-columns:minmax(370px, .62fr) minmax(600px,1fr)!important;gap:10px!important;align-items:stretch}
+.panel{background:#fff!important;border:1px solid #c8d7ce!important;border-radius:6px!important;box-shadow:none!important;min-width:0;overflow:hidden}
+.panel .head{background:linear-gradient(90deg,#087b45,#128b50)!important;color:#fff!important;padding:8px 12px!important;min-height:34px!important;border-bottom:0!important;display:flex;align-items:center}
+.panel .head h2{font-size:14px!important;color:#fff!important;font-weight:700!important;margin:0!important}
+.panel .head p{font-size:11px!important;color:#e4f3ea!important;margin:3px 0 0!important}
+.panel .head .badge{background:#e2f0e8!important;color:#075e32!important}
+.panel .body{padding:10px!important}
+label{font-size:12px!important;color:#3e4842!important}
+textarea{min-height:206px!important;width:100%;font:12px/1.6 Consolas,"Courier New",monospace!important;background:#fff!important;border:1px solid #cbd3d7!important;border-radius:4px!important;padding:10px!important}
+.fields{display:grid!important;grid-template-columns:1fr 1fr;gap:8px!important;margin:10px 0!important}
+select,input{font-size:12px!important;min-height:31px!important}
+.panel button{border-radius:4px!important;font-weight:600}
+.panel .body>button.gold#process2{width:65%;min-height:38px!important;background:#087b45!important;color:#fff!important}
+.help,.notice{font-size:11px!important;line-height:1.45!important;color:#56635b!important;background:#f2f7f4!important;border:0!important;border-radius:4px;padding:8px!important}
+.tablewrap{overflow:auto!important;max-height:360px;border:0!important}
+table{width:100%;border-collapse:collapse!important;font-size:12px!important}
+thead th{position:sticky;top:0;background:#dcece3!important;color:#174d31!important;font-size:12px!important;padding:7px 8px!important;border:1px solid #c5d4cb!important;white-space:nowrap}
+tbody td{padding:5px 8px!important;border:1px solid #d4d9d6!important;color:#1e2932!important}
+tbody tr:nth-child(even){background:#f1f7f3!important}
+tbody tr:hover{background:#e4f1e9!important}
+.analysis-panel{margin-top:10px!important;display:inline-block;vertical-align:top;width:calc(50% - 6px)}
+.issue-panel{margin-right:8px}
+.analysis-panel .image-export-actions{margin:8px!important;justify-content:flex-start}
+.analysis-panel .image-export-actions button{font-size:11px!important;padding:7px 9px!important}
+.analysis-panel .tablewrap{max-height:320px}
+.preview{border:1px solid #cad4ce!important;border-radius:3px!important;background:#fff!important}
+.preview h3{font-size:22px!important;color:#087b45!important;text-align:left!important}
+.sheet-tabs{position:sticky;bottom:0;z-index:5;margin:0!important;background:#f1f2f3!important;border-top:1px solid #c8cdd2!important;min-height:35px!important;padding-left:65px!important}
+.sheet-tabs span{padding:9px 18px!important;font-size:12px!important}
+.sheet-tabs span.active{border-bottom:3px solid #107c41!important;background:#fff!important}
+.foot{font-size:10px!important;color:#647068!important;padding:8px 0!important}
+@media(max-width:1000px){.excel-search{display:none}.layout{grid-template-columns:1fr!important}.analysis-panel{display:block;width:100%;margin-right:0}.stats{grid-template-columns:repeat(2,1fr)!important}.excel-ribbon{overflow-x:auto}}
+
+
+/* Theme switcher and profile popover */
+.excel-tabs{position:relative}
+.theme-toggle,.profile{font:inherit;cursor:pointer;border:1px solid #c9d0cc;background:#fff;color:#26352d;border-radius:4px;padding:5px 9px;display:inline-flex;align-items:center;gap:7px}
+.theme-toggle{margin:auto 12px auto auto;font-size:11px!important}
+.theme-swatch{width:14px;height:14px;border-radius:3px;background:linear-gradient(135deg,#d7dadd 50%,#f5f6f7 50%);border:1px solid #9aa2a7}
+.excel-tabs .profile{margin:3px 12px 3px 0!important;padding:3px 8px!important;gap:7px!important;font-size:12px!important}
+.profile-caret{color:#65716a}
+.profile-popover{position:absolute;z-index:1000;right:16px;top:36px;width:270px;background:#fff;border:1px solid #cbd3ce;border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.18);color:#25332b;overflow:hidden}
+.profile-popover[hidden]{display:none}
+.profile-popover-top{display:flex;align-items:center;gap:12px;padding:18px}
+.profile-popover-top strong{display:block;font-size:14px;color:#1d2c23}
+.profile-popover-top span{display:block;font-size:12px;color:#65716a;margin-top:4px}
+.avatar.big{width:42px;height:42px;font-size:13px;flex:0 0 42px}
+.profile-popover-footer{padding:11px 18px;background:#f5f7f6;border-top:1px solid #e0e5e2;font-size:11px;color:#66716b}
+.profile-status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#217346;margin-right:7px}
+/* Alternate neutral-grey Excel palette */
+body.grey-excel{background:#e3e5e7!important;color:#25282b!important}
+body.grey-excel .excel-titlebar{background:#41464b!important;box-shadow:inset 0 -1px #303438!important}
+body.grey-excel .excel-tabs,body.grey-excel .excel-ribbon{background:#eceeef!important;border-color:#c2c7cb!important}
+body.grey-excel .excel-tabs>span.selected{border-bottom-color:#666d73!important}
+body.grey-excel .panel .head{background:linear-gradient(90deg,#5b6268,#747b81)!important}
+body.grey-excel .stat{background:linear-gradient(100deg,#f4f5f6,#fff)!important;border-color:#c9cdd1!important}
+body.grey-excel .stat small,body.grey-excel .stat strong{color:#454b50!important}
+body.grey-excel .panel{border-color:#c5cacf!important}
+body.grey-excel thead th{background:#e1e4e6!important;color:#353b40!important;border-color:#c4c9cd!important}
+body.grey-excel tbody tr:nth-child(even){background:#f0f1f2!important}
+body.grey-excel .buttons button.gold,body.grey-excel .buttons #process{background:#555d63!important;border-color:#41474c!important}
+body.grey-excel .btn-icon.green{color:#555d63}
+body.grey-excel .theme-swatch{background:linear-gradient(135deg,#41464b 50%,#eceeef 50%)}
+
+
+/* Interactive visual-only Excel ribbon affordances */
+.excel-tabs>span:not(.profile):not(.selected){cursor:pointer;user-select:none}
+.excel-tabs>span:not(.profile):not(.selected):hover{background:#e6f2eb;color:#17683c}
+.excel-ribbon .ribbon-icon{cursor:pointer;border:1px solid transparent;border-radius:4px;padding:3px 5px;transition:background .12s,border-color .12s}
+.excel-ribbon .ribbon-icon:hover{background:#e6f2eb;border-color:#b6d5c2}
+.excel-ribbon .ribbon-icon:active{background:#cde6d7}
+body.grey-excel .excel-ribbon .ribbon-icon:hover,body.grey-excel .excel-tabs>span:not(.profile):not(.selected):hover{background:#dfe2e4;border-color:#b9bec2}
+.excel-ribbon .ribbon-icon.is-active{background:#d8eee0;border-color:#9cc9ad}
+body.grey-excel .excel-ribbon .ribbon-icon.is-active{background:#d8dbde;border-color:#aeb4b8}
+.excel-ribbon .ribbon-group{transition:background .12s}
+.ribbon-tip{position:fixed;z-index:2000;bottom:18px;left:50%;transform:translateX(-50%);background:#26332b;color:#fff;padding:9px 15px;border-radius:5px;font-size:12px;box-shadow:0 5px 20px #0003;max-width:90vw}
+.excel-dialog-backdrop{position:fixed;inset:0;background:#17231d55;z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px}
+.excel-dialog{width:min(440px,96vw);background:#fff;color:#222;border:1px solid #c9d0cc;border-radius:8px;box-shadow:0 20px 60px #0004;overflow:hidden;font-family:Calibri,"Segoe UI",Arial,sans-serif}
+.excel-dialog-head{background:#087b45;color:#fff;padding:13px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+body.grey-excel .excel-dialog-head{background:#555d63}
+.excel-dialog-head button{border:0!important;background:transparent!important;color:inherit!important;font-size:20px!important;min-width:auto!important;padding:0 4px!important}
+.excel-dialog-body{padding:18px;line-height:1.5;font-size:13px}
+.excel-dialog-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 18px 16px}
+.excel-dialog-actions button{padding:7px 13px!important;border:1px solid #c7ceca!important;border-radius:4px!important;background:#f6f7f7!important}
+.excel-dialog-actions .confirm{background:#087b45!important;color:#fff!important}
+body.grey-excel .excel-dialog-actions .confirm{background:#555d63!important}
+
+
+#clearPaste{min-height:38px!important;border:1px solid #c8d0cb!important;background:linear-gradient(#fff,#f1f3f2)!important;color:#b42318!important;font-weight:600!important;padding:8px 13px!important;border-radius:4px!important}
+#clearPaste:hover{background:#fff0ef!important;border-color:#e6a09b!important}
+body.grey-excel #clearPaste{background:linear-gradient(#fff,#e8eaec)!important;color:#b42318!important}
+
+
+/* Keep analysis image-copy actions immediately above the raw paste area for quick access. */
+#analysisImageActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-start;margin:0 0 10px!important;padding:0!important}
+#analysisImageActions button{min-height:34px!important;padding:7px 12px!important;border-radius:4px!important}
+
+
+/* Polished live command-center accents */
+.live-status{display:flex;align-items:center;gap:8px;margin-left:auto;margin-right:18px;padding:6px 10px;border:1px solid rgba(255,255,255,.25);border-radius:5px;background:rgba(255,255,255,.10);font-size:11px;font-weight:700;letter-spacing:.08em;color:#eafff1;white-space:nowrap}
+.live-dot{width:7px;height:7px;display:inline-block;border-radius:50%;background:#70f0a2;box-shadow:0 0 0 0 rgba(112,240,162,.65);animation:livePulse 1.8s infinite}
+.live-clock{font-variant-numeric:tabular-nums;letter-spacing:.03em;border-left:1px solid rgba(255,255,255,.28);padding-left:8px;font-weight:500}
+@keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(112,240,162,.55)}70%{box-shadow:0 0 0 7px rgba(112,240,162,0)}100%{box-shadow:0 0 0 0 rgba(112,240,162,0)}}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 10% 15%,rgba(33,115,70,.07),transparent 35%),radial-gradient(ellipse at 90% 80%,rgba(80,145,115,.06),transparent 32%)}
+.stat{transition:transform .18s ease,box-shadow .18s ease!important}
+.stat:hover{transform:translateY(-3px)!important;box-shadow:0 7px 18px rgba(25,65,43,.10)!important}
+.panel{transition:border-color .18s ease,box-shadow .18s ease!important}
+.panel:hover{border-color:#a9cbbb!important;box-shadow:0 4px 15px rgba(30,70,48,.045)!important}
+body.grey-excel .live-status{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2)}
+body.grey-excel .live-dot{background:#c4e1d0;animation-duration:2.4s}
+@media(prefers-reduced-motion:reduce){.live-dot{animation:none}.stat,.panel{transition:none!important}}
+@media(max-width:760px){.live-status{margin-left:6px;margin-right:4px;padding:5px 7px}.live-status>span:nth-child(2){display:none}.live-clock{padding-left:0;border-left:0}.excel-titlebar strong{font-size:12px}.title-right{gap:5px}}
+
+
+/* Premium animated profile card */
+.profile-popover{width:310px!important;border-radius:12px!important;border-color:#c5d9cd!important;box-shadow:0 18px 48px rgba(13,45,28,.24),0 2px 8px rgba(0,0,0,.08)!important;animation:profileReveal .22s cubic-bezier(.2,.8,.2,1) both!important}
+@keyframes profileReveal{from{opacity:0;transform:translateY(-8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.profile-art{height:112px;position:relative;overflow:hidden;background:linear-gradient(120deg,#075e32,#0b7945 52%,#123e2b);isolation:isolate}
+.profile-art:before{content:"";position:absolute;inset:-50%;background:repeating-linear-gradient(125deg,transparent 0 28px,rgba(255,255,255,.08) 29px 30px);animation:profileShimmer 12s linear infinite}
+.profile-art:after{content:"";position:absolute;width:160px;height:160px;border-radius:50%;right:-35px;top:-75px;border:1px solid rgba(218,255,232,.3);box-shadow:0 0 0 16px rgba(218,255,232,.05),0 0 0 32px rgba(218,255,232,.04)}
+@keyframes profileShimmer{to{transform:translateX(80px)}}
+.profile-art-label{position:absolute;left:15px;bottom:12px;color:rgba(255,255,255,.8);font-size:9px;letter-spacing:.19em;font-weight:700}
+.profile-orbit{position:absolute;border:1px solid rgba(206,255,223,.24);border-radius:50%;width:170px;height:65px;right:18px;top:13px;transform:rotate(-25deg)}
+.orbit-two{width:140px;height:48px;right:32px;top:22px;transform:rotate(25deg);border-color:rgba(255,219,125,.38)}
+.butterfly{position:absolute;z-index:2;font-size:25px;filter:drop-shadow(0 2px 4px #001c1066);will-change:transform;animation:butterflyFlight 5.5s ease-in-out infinite}
+.butterfly-one{right:56px;top:20px;animation-delay:-1.5s}
+.butterfly-two{right:118px;top:48px;font-size:17px;opacity:.78;animation-duration:7s;animation-delay:-3s}
+@keyframes butterflyFlight{0%,100%{transform:translate(0,0) rotate(-12deg) scale(1)}25%{transform:translate(12px,-9px) rotate(10deg) scale(1.08)}50%{transform:translate(-4px,-16px) rotate(-5deg) scale(.96)}75%{transform:translate(-13px,-4px) rotate(12deg) scale(1.04)}}
+.profile-spark{position:absolute;color:#ffe29a;animation:sparkle 2.4s ease-in-out infinite}
+.spark-one{right:30px;top:15px;font-size:18px}.spark-two{right:145px;top:17px;font-size:13px;animation-delay:1s}
+@keyframes sparkle{0%,100%{opacity:.3;transform:scale(.75) rotate(0)}50%{opacity:1;transform:scale(1.2) rotate(35deg)}}
+.profile-popover-top{padding:16px 17px!important;gap:12px!important}
+.profile-popover-top strong{font-size:14px!important;letter-spacing:.01em}
+.profile-tagline{display:block;margin-top:5px;font-size:10px;color:#7a8980;letter-spacing:.015em}
+.profile-popover-footer{display:flex;align-items:center;min-height:38px}
+.profile-footer-right{margin-left:auto;font-size:9px;letter-spacing:.1em;font-weight:800;color:#217346}
+body.grey-excel .profile-art{background:linear-gradient(120deg,#343a40,#646b71 52%,#292e32)}
+body.grey-excel .profile-footer-right{color:#58636b}
+@media(prefers-reduced-motion:reduce){.profile-popover,.profile-art:before,.butterfly,.profile-spark{animation:none!important}}
+
+
+/* Refined executive profile card: editorial typography, custom butterfly artwork, restrained motion */
+.profile-popover{width:340px!important;border-radius:13px!important;border:1px solid #cbd8d0!important;box-shadow:0 24px 70px rgba(11,37,24,.25),0 4px 14px rgba(0,0,0,.08)!important}
+.profile-art{height:150px!important;background:radial-gradient(ellipse at 75% 20%,rgba(201,154,66,.20),transparent 38%),linear-gradient(120deg,#071f16 0%,#064b2b 48%,#0a6a3d 100%)!important}
+.profile-art-grid{position:absolute;inset:0;opacity:.22;background-image:linear-gradient(rgba(221,255,234,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(221,255,234,.14) 1px,transparent 1px);background-size:26px 26px;mask-image:linear-gradient(90deg,transparent,#000 45%,#000)}
+.profile-art:before{inset:-60%;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.10) 48%,transparent 60%);animation:profileShimmer 8s ease-in-out infinite}
+.profile-art:after{width:190px;height:190px;right:-48px;top:-88px;border-color:rgba(255,226,154,.32);box-shadow:0 0 0 18px rgba(255,226,154,.045),0 0 0 38px rgba(255,226,154,.025)}
+.profile-orbit{width:210px;height:82px;right:4px;top:17px;border-color:rgba(255,226,154,.28);transform:rotate(-24deg)}
+.profile-orbit.orbit-two{width:165px;height:58px;right:26px;top:30px;transform:rotate(22deg);border-color:rgba(217,255,230,.32)}
+.butterfly{width:66px;height:58px;font-size:0;filter:drop-shadow(0 5px 9px rgba(0,0,0,.28));animation:butterflyFlight 7s ease-in-out infinite}
+.butterfly svg{width:100%;height:100%;overflow:visible}
+.butterfly .wing{transform-box:fill-box;transform-origin:center;animation:wingBeat 0.65s ease-in-out infinite alternate}
+.wing-left{transform-origin:100% 50%}.wing-right{transform-origin:0% 50%}
+.butterfly-one{right:66px;top:28px;width:70px;height:58px;animation-duration:8s}
+.butterfly-two{right:145px;top:57px;width:38px;height:32px;opacity:.82;animation-duration:10s;animation-delay:-4s}
+@keyframes wingBeat{from{transform:scaleX(1)}to{transform:scaleX(.68)}}
+@keyframes butterflyFlight{0%,100%{transform:translate(0,0) rotate(-8deg)}25%{transform:translate(10px,-8px) rotate(5deg)}55%{transform:translate(-7px,-17px) rotate(-3deg)}78%{transform:translate(-13px,-4px) rotate(7deg)}}
+.profile-art-copy{position:absolute;left:17px;bottom:15px;display:flex;flex-direction:column;gap:5px;z-index:3}
+.profile-art-label{position:static!important;color:#f8e6b5!important;font-size:10px!important;letter-spacing:.22em!important;font-weight:700}
+.profile-art-sub{color:rgba(235,255,242,.72);font-size:8px;letter-spacing:.15em;font-weight:600;display:flex;align-items:center;gap:7px}
+.profile-art-sub i{display:inline-block;width:5px;height:5px;border-radius:50%;background:#e2c16e;box-shadow:0 0 8px #e2c16e}
+.profile-art-index{position:absolute;right:14px;bottom:16px;color:rgba(255,255,255,.58);font:10px/1.2 Consolas,monospace;letter-spacing:.08em}
+.profile-popover-top{padding:19px 18px!important;background:linear-gradient(180deg,#fff,#fbfcfb);gap:13px!important}
+.profile-popover-top .avatar.big{width:48px;height:48px;flex-basis:48px;background:linear-gradient(145deg,#e7f3eb,#c9e4d3);border:1px solid #b8d8c4;color:#075e32;font-size:13px;font-weight:800;box-shadow:0 0 0 4px #f1f7f3}
+.profile-popover-top strong{font-size:15px!important;font-weight:700;letter-spacing:-.015em}
+.profile-popover-top span{font-size:12px!important;color:#65746b!important}
+.profile-tagline{font-size:10px!important;letter-spacing:.025em;color:#87928b!important}
+.profile-popover-footer{padding:12px 18px!important;background:#f6f8f6!important;border-top:1px solid #e3e9e5!important}
+.profile-footer-right{font-size:9px!important;letter-spacing:.13em!important}
+body.grey-excel .profile-art{background:radial-gradient(ellipse at 75% 20%,rgba(255,255,255,.16),transparent 38%),linear-gradient(120deg,#252a2e 0%,#454c51 48%,#656d72 100%)!important}
+body.grey-excel .profile-art-label{color:#f1f3f4!important}
+body.grey-excel .profile-popover{border-color:#c5cacf!important}
+@media(prefers-reduced-motion:reduce){.butterfly,.butterfly .wing,.profile-art:before{animation:none!important}}
+
+
+/* Office-like interaction polish: controls respond visually without modifying workbook data */
+.excel-tabs>span:not(.profile),.excel-tabs .theme-toggle,.excel-tabs .profile{transition:background .12s,box-shadow .12s}
+.excel-tabs>span:not(.profile):active,.theme-toggle:active,.profile:active{box-shadow:inset 0 1px 3px #0002}
+.excel-ribbon .ribbon-icon:focus-visible,.excel-tabs button:focus-visible,.excel-tabs>span:focus-visible{outline:2px solid #217346;outline-offset:1px}
+.excel-ribbon .ribbon-icon:after{content:"";position:absolute;inset:0;border-radius:4px;pointer-events:none}
+.excel-ribbon .ribbon-icon{position:relative;user-select:none}
+.excel-ribbon .ribbon-icon.is-active{box-shadow:inset 0 0 0 1px #8fbaa0,0 1px 2px #0001}
+.excel-tabs>span.selected{background:#fff;box-shadow:inset 0 1px #fff}
+body.grey-excel .excel-tabs>span.selected{background:#f8f9fa}
+.excel-menu-preview{position:fixed;z-index:2500;min-width:225px;max-width:290px;background:#fff;border:1px solid #c8d0cb;border-radius:5px;box-shadow:0 8px 28px #0002;padding:6px;color:#26332b;font:12px Calibri,"Segoe UI",sans-serif}
+.excel-menu-preview .menu-title{padding:8px 10px 9px;font-weight:700;border-bottom:1px solid #e4e8e5;margin-bottom:4px;color:#217346}
+.excel-menu-preview button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:8px 10px;border-radius:3px;color:inherit;font:inherit;cursor:pointer}
+.excel-menu-preview button:hover{background:#eaf4ee}
+.excel-menu-preview .menu-note{padding:7px 10px;color:#78817b;font-size:10px}
+body.grey-excel .excel-menu-preview .menu-title{color:#555d63}
+body.grey-excel .excel-menu-preview button:hover{background:#eceeef}
+.ribbon-control-hint{font-size:10px;color:#66726b;margin-top:3px}
+
+
+/* High-fidelity Excel-inspired interaction layer */
+.excel-titlebar{position:relative}
+.excel-tabs{box-shadow:0 1px 0 #fff inset}
+.excel-ribbon{background:linear-gradient(#fbfbfb,#f1f2f3)!important;box-shadow:0 2px 3px rgba(0,0,0,.035)}
+.excel-ribbon .ribbon-group{border-right:1px solid #d8dcdf}
+.excel-ribbon .ribbon-icon:hover{background:#e5f1e9;border-color:#b4d2bf;box-shadow:0 1px 1px #0000000a}
+.excel-ribbon .ribbon-icon:active,.excel-ribbon .ribbon-icon.is-active{background:#d1e7d9;border-color:#91b9a0;box-shadow:inset 0 1px 2px #0002}
+.excel-tabs>span{cursor:pointer;position:relative}
+.excel-tabs>span.selected:after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:3px;background:#217346}
+.excel-menu-preview{min-width:245px!important;border-radius:3px!important;padding:4px!important;box-shadow:0 6px 18px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.025)!important;animation:excelMenuIn .12s ease-out}
+@keyframes excelMenuIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+.excel-menu-preview .menu-title{font-weight:600!important;padding:8px 10px!important;color:#333!important;border-bottom:1px solid #e2e5e3!important}
+.excel-menu-preview button{min-height:30px;padding:7px 10px!important;border-radius:2px!important}
+.excel-menu-preview button:before{content:"";display:inline-block;width:18px;height:18px;vertical-align:middle;margin-right:8px;border:1px solid #d8dfda;border-radius:2px;background:linear-gradient(135deg,#e6f1e9,#fff)}
+.excel-menu-preview button:hover{background:#e7f2eb!important}
+.excel-menu-preview .menu-note{border-top:1px solid #e7e9e8;margin-top:4px;padding-top:8px}
+.excel-keytips{position:fixed;z-index:4000;top:34px;left:30%;display:flex;gap:7px;flex-wrap:wrap;max-width:60vw}
+.excel-keytips span{font:600 11px Calibri,Arial,sans-serif;background:#fff4c2;border:1px solid #c9a94c;color:#342c16;border-radius:2px;padding:3px 6px;box-shadow:0 1px 3px #0002}
+.excel-selection{outline:2px solid #217346!important;outline-offset:-2px!important}
+.excel-status-flash{position:fixed;left:12px;bottom:38px;z-index:4500;background:#fff;border:1px solid #c8d0cb;padding:6px 10px;border-radius:3px;box-shadow:0 3px 12px #0002;font:12px Calibri,Arial,sans-serif;color:#35433a}
+body.grey-excel .excel-ribbon{background:linear-gradient(#f4f5f6,#e8eaec)!important}
+body.grey-excel .excel-tabs>span.selected:after{background:#62696e}
+body.grey-excel .excel-keytips span{background:#eceeef;border-color:#a9afb3;color:#303438}
+@media(prefers-reduced-motion:reduce){.excel-menu-preview{animation:none}}
+
+
+/* Complete theme coverage for every workspace surface and interactive state */
+body.grey-excel{--excel-accent:#5b6268;--excel-accent-dark:#41464b;--excel-accent-soft:#e1e4e6;--excel-accent-pale:#f0f1f2;--excel-line:#c4c9cd;--excel-text:#25282b;--excel-muted:#596168}
+body:not(.grey-excel){--excel-accent:#217346;--excel-accent-dark:#075e32;--excel-accent-soft:#d9eadf;--excel-accent-pale:#eff6f1;--excel-line:#c7d9ce;--excel-text:#202923;--excel-muted:#65736a}
+body.grey-excel .excel-titlebar,
+body.grey-excel .excel-titlebar *,
+body.grey-excel .excel-statusbar{color:#f6f7f8!important}
+body.grey-excel .excel-titlebar{background:linear-gradient(90deg,#383d42,#50575d)!important}
+body.grey-excel .excel-tabs{background:#e8eaec!important;color:#30363a!important;border-color:#c5c9cd!important}
+body.grey-excel .excel-tabs>span{color:#30363a!important}
+body.grey-excel .excel-tabs>span.selected{background:#f8f9fa!important;color:#252a2e!important}
+body.grey-excel .excel-ribbon{background:linear-gradient(#f7f8f9,#e8eaec)!important;color:#30363a!important;border-color:#c5c9cd!important}
+body.grey-excel .excel-ribbon *{border-color:#cbd0d3}
+body.grey-excel .excel-ribbon button,
+body.grey-excel .excel-ribbon .ribbon-icon{color:#30363a!important}
+body.grey-excel .excel-ribbon .ribbon-icon:hover{background:#e0e3e5!important}
+body.grey-excel .excel-ribbon .ribbon-icon:active,
+body.grey-excel .excel-ribbon .ribbon-icon.is-active{background:#d1d5d8!important}
+body.grey-excel .panel .head,
+body.grey-excel .panel-header,
+body.grey-excel .section-head{background:linear-gradient(90deg,#565d63,#747b81)!important;color:#fff!important}
+body.grey-excel .panel .head *,
+body.grey-excel .panel-header *,
+body.grey-excel .section-head *{color:#fff!important}
+body.grey-excel .stat{background:linear-gradient(110deg,#f5f6f7,#fff)!important;border-color:#c9cdd1!important}
+body.grey-excel .stat .icon,
+body.grey-excel .stat .stat-icon{background:#dfe2e4!important;color:#4b5258!important}
+body.grey-excel .stat small,body.grey-excel .stat strong,body.grey-excel .stat span{color:#3e454a}
+body.grey-excel .buttons button.gold,
+body.grey-excel .buttons #process,
+body.grey-excel button.gold,
+body.grey-excel button.primary{background:linear-gradient(#626a70,#4d545a)!important;border-color:#42484d!important;color:#fff!important}
+body.grey-excel .buttons button:not(.gold):not(#process),
+body.grey-excel button:not(.gold):not(#process):not(.theme-toggle):not(.profile){border-color:#c4c9cd}
+body.grey-excel .theme-toggle{background:#f5f6f7!important;color:#3c4348!important;border-color:#bfc5c9!important}
+body.grey-excel .profile{background:#f7f8f9!important;color:#30363a!important;border-color:#c3c8cc!important}
+body.grey-excel .profile .avatar{background:#dce0e3!important;color:#454c52!important;border-color:#c4c9cd!important}
+body.grey-excel .profile-popover{background:#fff!important;color:#25282b!important;border-color:#c5cacf!important}
+body.grey-excel .profile-popover-top{background:#fff!important}
+body.grey-excel .profile-popover-top strong{color:#25282b!important}
+body.grey-excel .profile-popover-top span{color:#5f666b!important}
+body.grey-excel .profile-popover-footer{background:#f0f1f2!important;color:#42494e!important;border-color:#d9dcdf!important}
+body.grey-excel .profile-art{background:radial-gradient(ellipse at 75% 20%,rgba(255,255,255,.16),transparent 38%),linear-gradient(120deg,#252a2e 0%,#454c51 48%,#656d72 100%)!important}
+body.grey-excel .image-export-actions{background:#e7e9eb!important;border-color:#c5cacf!important}
+body.grey-excel .image-export-actions button{background:linear-gradient(#626a70,#4d545a)!important;color:#fff!important;border-color:#454b50!important}
+body.grey-excel .fields select,body.grey-excel .fields input,body.grey-excel textarea,
+body.grey-excel input,body.grey-excel select,body.grey-excel textarea{border-color:#c4c9cd!important;background-color:#fff!important;color:#25282b!important}
+body.grey-excel .sheet-tabs{background:#e5e7e9!important;border-color:#c3c8cc!important}
+body.grey-excel .sheet-tabs span{color:#41484d!important}
+body.grey-excel .sheet-tabs span.active{background:#f8f9fa!important;border-top-color:#62696e!important;color:#252a2e!important}
+body.grey-excel .excel-statusbar{background:#e8eaec!important;color:#454c51!important;border-color:#c4c9cd!important}
+body.grey-excel .excel-menu-preview{background:#f9fafb!important;border-color:#c3c8cc!important;color:#30363a!important}
+body.grey-excel .excel-menu-preview .menu-title{color:#41484d!important}
+body.grey-excel .excel-menu-preview button:hover{background:#e5e7e9!important}
+body.grey-excel .excel-selection{outline-color:#62696e!important}
+body.grey-excel .live-status{background:rgba(255,255,255,.10)!important;color:#fff!important}
+body.grey-excel .live-dot{background:#d8dde0!important;box-shadow:0 0 0 0 rgba(220,225,228,.5)}
+body.grey-excel .live-clock{color:#fff!important}
+body.grey-excel .excel-tabs>span.selected:after{background:#62696e!important}
+body.grey-excel .ribbon-tip,body.grey-excel .excel-status-flash{background:#f8f9fa!important;color:#30363a!important;border-color:#c4c9cd!important}
+body.grey-excel .panel,body.grey-excel .analysis-card{background:#f9fafb!important;border-color:#c5cacf!important}
+body.grey-excel .panel p,body.grey-excel .panel small,body.grey-excel .analysis-card p{color:#565e64!important}
+body.grey-excel .bar-fill,body.grey-excel .progress-fill{filter:grayscale(.75)}
+body.grey-excel .review-ok{background:#e1e4e6!important;color:#41484d!important}
+body.grey-excel .review-warn{background:#f4e8c9!important;color:#6b5522!important}
+body.grey-excel ::selection{background:#d2d6d9!important;color:#202428!important}
+
+</style></head><body><div class="excel-titlebar">
+ <div class="excel-appicon"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="10" y="3" width="25" height="33" rx="2" fill="#fff"/><path d="M17 3h11v7H17z" fill="#d8eee1"/><rect x="3" y="9" width="20" height="22" rx="2" fill="#107c41"/><path d="M8 14l9 12M17 14L8 26" stroke="#fff" stroke-width="2.5"/></svg></div>
+ <strong>Real Time Order ID Tracker.xlsx</strong><span class="title-chevron">⌄</span>
+ <div class="excel-search">⌕ <span>Search (Alt + Q)</span></div>
+ <div class="live-status" id="liveStatus"><span class="live-dot"></span><span>LIVE</span><span class="live-clock" id="liveClock">--:--:--</span></div><div class="title-right"><span>AutoSave</span><span class="toggle"><i></i></span><span class="window-btn">—</span><span class="window-btn">□</span><span class="window-btn">×</span></div>
+</div>
+<nav class="excel-tabs"><span>File</span><span class="selected">Home</span><span>Insert</span><span>Page Layout</span><span>Formulas</span><span>Data</span><span>Review</span><span>View</span><span>Help</span><button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch Excel theme"><span class="theme-swatch"></span><span id="themeToggleLabel">Switch to Grey Excel Theme</span></button>
+ <button type="button" class="profile" id="profileButton" aria-haspopup="dialog" aria-expanded="false"><b class="avatar">AP</b><span>Abhijith Prasad</span><span class="profile-caret">▾</span></button>
+ <div class="profile-popover" id="profilePopover" role="dialog" aria-label="Profile details" hidden>
+  <div class="profile-art" aria-hidden="true">
+  <div class="profile-art-grid"></div>
+  <span class="profile-orbit orbit-one"></span><span class="profile-orbit orbit-two"></span>
+  <span class="butterfly butterfly-one"><svg viewBox="0 0 100 80"><defs><linearGradient id="wingGold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0b8"/><stop offset="1" stop-color="#c99a42"/></linearGradient></defs><path class="wing wing-left" d="M48 38C30 2 2 5 7 31c3 17 20 20 39 12C19 55 25 75 40 68c8-4 10-17 10-29Z" fill="url(#wingGold)" stroke="#fff0b8" stroke-width="1.5"/><path class="wing wing-right" d="M52 38C70 2 98 5 93 31c-3 17-20 20-39 12 27 12 21 32 6 25-8-4-10-17-10-29Z" fill="url(#wingGold)" stroke="#fff0b8" stroke-width="1.5"/><path d="M50 29v37M49 31l-8-10m10 10 8-10" stroke="#fff8de" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg></span>
+  <span class="butterfly butterfly-two"><svg viewBox="0 0 100 80"><path class="wing wing-left" d="M48 38C30 2 2 5 7 31c3 17 20 20 39 12C19 55 25 75 40 68c8-4 10-17 10-29Z" fill="#a6e6c0"/><path class="wing wing-right" d="M52 38C70 2 98 5 93 31c-3 17-20 20-39 12 27 12 21 32 6 25-8-4-10-17-10-29Z" fill="#a6e6c0"/><path d="M50 29v37M49 31l-8-10m10 10 8-10" stroke="#effff5" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg></span>
+  <span class="profile-spark spark-one">✦</span><span class="profile-spark spark-two">✧</span>
+  <div class="profile-art-copy"><span class="profile-art-label">PRIVATE WORKSPACE</span><span class="profile-art-sub">OPERATIONS INTELLIGENCE <i></i></span></div>
+  <span class="profile-art-index">RT / 01</span>
+</div>
+  <div class="profile-popover-top"><b class="avatar big">AP</b><div><strong>Abhijith Prasad</strong><span>Creator admin</span><small class="profile-tagline">Real Time Order ID Tracker</small></div></div>
+  <div class="profile-popover-footer"><span class="profile-status-dot"></span> Tracker owner <span class="profile-footer-right">● ACTIVE</span></div>
+</div></nav>
+<div class="excel-ribbon" aria-label="Excel-style ribbon">
+ <div class="ribbon-group"><div class="ribbon-icon large"><svg viewBox="0 0 24 24"><path d="M4 3h12l4 5v13H4z"/><path d="M16 3v6h4M7 13h10M7 17h10"/></svg><span>Paste</span></div><div class="ribbon-stack"><div class="ribbon-icon"><svg viewBox="0 0 24 24"><path d="M8 8h12v13H8zM5 16H4V3h12v2"/></svg><span>Copy</span></div><div class="ribbon-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16M7 5v15h10V5M9 9h6M9 13h6"/></svg><span>Format Painter</span></div></div><small>Clipboard</small></div>
+ <div class="ribbon-group"><div class="ribbon-toolset"><span class="font-select">Aptos ▾</span><span class="font-select small">11 ▾</span><div class="toolrow"><b>B</b><i>I</i><u>U</u><span>▦</span><span>🖍</span><span style="color:#d93025">A̲</span></div></div><small>Font</small></div>
+ <div class="ribbon-group"><div class="ribbon-toolset"><div class="toolrow">☰　≡　▤　↔</div><div class="toolrow">⇤　⇥　↕　▦</div><div class="toolrow">Wrap Text　 Merge &amp; Center</div></div><small>Alignment</small></div>
+ <div class="ribbon-group"><div class="ribbon-toolset"><span class="font-select">General ▾</span><div class="toolrow">＄　%　,　⇆</div></div><small>Number</small></div>
+ <div class="ribbon-group"><div class="ribbon-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/><path d="M12 13l2 2 4-4"/></svg><span>Conditional<br>Formatting</span></div><div class="ribbon-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 9h16M9 9v11"/></svg><span>Format as<br>Table</span></div><div class="ribbon-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5"/></svg><span>Cell Styles</span></div><small>Styles</small></div>
+ <div class="ribbon-group"><div class="ribbon-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 10h16M10 4v16"/></svg><span>Insert</span></div><div class="ribbon-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14M8 5v15h8V5M10 9h4"/></svg><span>Delete</span></div><div class="ribbon-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 9h16M9 4v16"/></svg><span>Format</span></div><small>Cells</small></div>
+ <div class="ribbon-group"><div class="ribbon-icon"><svg viewBox="0 0 24 24"><path d="M3 5h18M6 5l2 15h8l2-15M9 9h6"/></svg><span>Sort &amp; Filter</span></div><div class="ribbon-icon"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="M15 15l6 6"/></svg><span>Find &amp; Select</span></div><small>Editing</small></div>
+</div>
+<main class="wrap">
+<div class="buttons"><button class="gold" id="process"><span class="btn-icon">▶</span> Process Messages</button><button id="copy"><span class="btn-icon green">▤</span> Copy as Text</button><button id="csv"><span class="btn-icon green">▦</span> Download as Excel</button><button id="png"><span class="btn-icon green">▧</span> Copy as Image</button><button id="copyimg"><span class="btn-icon green">▣</span> Copy Table Image</button><button id="clear"><span class="btn-icon red">▤</span> Clear All</button></div>
+<div class="stats"><div class="stat"><small>Order IDs Found</small><strong id="n">0</strong></div><div class="stat"><small>Unique Tags</small><strong id="t">0</strong></div><div class="stat"><small>Cities Found</small><strong id="c">0</strong></div><div class="stat"><small>Needs Review</small><strong id="r">0</strong></div></div>
+<div class="layout"><section class="panel"><div class="head"><div><h2>1. Raw WhatsApp Messages</h2><p>Paste copied chat text below.</p></div><span class="badge" id="lines">0 lines</span></div><div class="body"><div class="image-export-actions" id="analysisImageActions">
+  <button type="button" id="copyIssueImage">Copy Issue-wise Image</button>
+  <button type="button" id="copyCityImage">Copy City-wise Image</button>
+</div>
+<label for="raw">Raw paste data</label><textarea id="raw" spellcheck="false" placeholder="Paste WhatsApp messages here" autocomplete="off"></textarea><div class="fields"><div><label>Unrecognized issue fallback</label><select id="tagfallback"><option>Keep original text</option><option>Unknown Issue</option></select></div><div><label>Missing city fallback</label><select id="cityfallback"><option>City Not Provided</option><option value="">Leave blank</option></select></div></div><button class="gold" id="process2">Process Messages</button> <button id="clearPaste" type="button" title="Clear only the raw pasted text">Clear Paste</button><div class="status" id="status"></div></div></section>
+<section class="panel"><div class="head"><div><h2>2. Extracted Results</h2><p>Click a cell to correct it before exporting.</p></div><span class="badge" id="rowscount">0 rows</span></div><div class="tablewrap"><table><thead><tr><th>Order ID</th><th>Tag</th><th>City</th><th>Review</th><th>Action</th></tr></thead><tbody id="out"><tr><td colspan="5">Paste messages and process them.</td></tr></tbody></table></div><div class="body"><button id="add">+ Add Row</button> <button id="remove">Remove rows without valid Order ID</button></div></section></div>
+<section class="panel analysis-panel issue-panel" style="margin-top:16px"><div class="head"><div>
+<h2>3. Issue Type Analysis</h2><p>Count and contribution of each issue type across all parsed orders.</p></div></div><div class="tablewrap"><table><thead><tr><th>Issue Type</th><th>Count</th><th>Contribution</th></tr></thead><tbody id="issueSummary"><tr><td colspan="3">No data yet</td></tr></tbody></table></div></section>
+<section class="panel analysis-panel city-panel" style="margin-top:16px"><div class="head"><div><h2>4. City Analysis</h2><p>Count and contribution of orders by city.</p></div></div><div class="tablewrap"><table><thead><tr><th>City</th><th>Count</th><th>Contribution</th></tr></thead><tbody id="citySummary"><tr><td colspan="3">No data yet</td></tr></tbody></table></div></section>
+<section class="panel" style="margin-top:16px"><div class="head"><div><h2>5. Image / Copy Preview</h2><p>Clean share-ready table for screenshots or export.</p></div></div><div class="body"><div class="preview" id="preview"><h3>Real Time Order ID Tracker</h3><p id="date"></p><table><thead><tr><th>Order ID</th><th>Tag</th><th>City</th></tr></thead><tbody id="prevrows"><tr><td colspan="3">No results yet</td></tr></tbody></table></div><p class="help">If copying an image is blocked by the browser, use Copy as Image. CSV files open in Excel and preserve the three columns.</p></div></section><div class="foot">Runs locally in your browser. Pasted content is not uploaded by this page.</div></main>
+<script>
+const known=[
+[/\bopav\s*1st\s*rider\s*fault\b/i,"OPAV 1st Rider Fault"],
+[/\b(?:opav|order picked by another dp|order picked by another rider)\b/i,"Order Picked by Another Rider"],
+[/\bumd\b|\buma\b|unable\s+to\s+mark\s+deliver/i,"Unable to Mark Deliver"],
+[/\bcdo\b|cx\s+den(?:y|ying)\s+order|customer\s+denying\s+order/i,"Cx Denying Order"],
+[/\bhov\b|high\s+order\s+value/i,"High Order Value"],
+[/\biar\b|issue\s+already\s+(?:resolved|solved)/i,"Issue Already Resolved"],
+[/\bncdp\b|not\s+connected\s+by\s+dp/i,"Not Connected By DP"],
+[/\bhwt\b|high\s+wait\s+time\s+at\s+mx/i,"High Wait Time at MX"],
+[/\bcnr\b|cx\s+not\s+reachable(?:\/|\s*)responding|customer\s+not\s+reachable/i,"Cx Not Reachable/Responding"],
+[/\bcam\b|\bwua\b|customer\s+address\s+mismatch/i,"Customer Address Mismatch"],
+[/\bcfca\b|cannot\s+find\s+customer\s+address/i,"Cannot Find Customer Address"],
+[/\bica\b|incomplete\s+cx\s+address/i,"Incomplete Cx Address"],
+[/\bioos\b|item\s+out\s+of\s+stock/i,"Item Out of Stock"],
+[/\bori\b|order\s+related(?:\s+info)?/i,"Order Related Info"],
+[/\bcall\s*drop\b/i,"Call Drop"],
+[/\bdrop\s*otp\b/i,"Drop OTP"],
+[/\bpickup\s*otp\b/i,"Pickup OTP"],
+[/\b(?:mx|rx)\s+closed\b|outlet\s+closed/i,"Outlet Closed"],
+[/\bnon\s*order(?:\s+call)?\b/i,"Non Order Call"],
+[/\b(?:rain\s*surge)\b/i,"Rain Surge"],
+[/\bmultiple\s+call\s+landing\s+at\s+same\s+time\b/i,"Multiple Call Landing at Same Time"],
+[/\blong\s+distance\s+order\b|\blong\s+distance\b/i,"Long Distance Order"],
+[/\bdelayed\s+due\s+to\s+rain(?:\/traffic)?\b|\btraffic\s+delay\b/i,"Delayed Due to Rain/Traffic"],
+[/\bcx\s+refused\s+replacement\b/i,"Cx Refused Replacement"],
+[/\bcx\s+accepted\s+replacement\b/i,"Cx Accepted Replacement"],
+[/\bmx\s+agreed\s+to\s+redispatch\b/i,"MX Agreed to ReDispatch"],
+[/\bhandshake\s+failure(?:\s*[-–:]?\s*dp\s+not\s+found)?\b/i,"Handshake Failure - DP Not Found"],
+[/\bunable\s+to\s+find\s+mx\s+address\b/i,"Unable to Find MX Address"],
+[/\bincorrect\s+mx\s+address\b/i,"Incorrect MX Address"],
+[/\bmx\s+refusing\s+to\s+give\s+order\b/i,"MX Refusing to Give Order"],
+[/\bmx\s+long\s+distance\b/i,"MX Long Distance"],
+[/\bmx\s+threatened\/?\s*abusive\s+dp\b/i,"MX Threatened/Abusive DP"],
+[/\bmx\s+physically\s+assaulted\s+dp\b/i,"MX Physically Assaulted DP"],
+[/\bmx\s+abused\s+support\b/i,"MX Abused Support"],
+[/\bmerchant\s+device\s+issue\b/i,"Merchant Device Issue"],
+[/\bpackaging\s+issue\b/i,"Packaging Issue"],
+[/\bkitchen\s+issues?\b/i,"Kitchen Issues"],
+[/\bmissing\s+item\b/i,"Missing Item"],
+[/\bless\s+quantity\b/i,"Less Quantity"],
+[/\bwrong\s+food\s+order\s+ready\s+punch\b/i,"Wrong Food Order Ready Punch"],
+[/\bwrong\s+punch\s+by\s+fe\b/i,"Wrong Punch by FE"],
+[/\bwrong\s+item\b/i,"Wrong Item"],
+[/\bwrong\s+order\b/i,"Wrong Order"],
+[/\bdamaged\s+(?:or\s+)?broken\s+items?\b/i,"Damaged or Broken Items"],
+[/\bcontent\s+issues?\b/i,"Content Issues"],
+[/\bpartial\s+delivery\b/i,"Partial Delivery"],
+[/\bfood\s+not\s+delivered\b/i,"Food Not Delivered"],
+[/\bfood\s+rescue\s+concern\b/i,"Food Rescue Concern"],
+[/\bhigh\s+risk\s+payment\s+reversal\b/i,"High Risk Payment Reversal (System Triggered)"],
+[/\bcod\s+qr\s+payment\s+issues?\b/i,"COD QR Payment Issues"],
+[/\bpayment\s+failure\b/i,"Payment Failure"],
+[/\bchange\s+issue\s*\(?cod\s+orders?\)?/i,"Change Issue (COD Orders)"],
+[/\bcx\s+unreachable\s+for\s+replacement\b/i,"Cx Unreachable for Replacement"],
+[/\bdelayed?\b/i,"Delay"],
+[/\bdp\s+delay\s+post\s+pickup\b/i,"DP Delay Post Pickup"],
+[/\bdp\s+delay\s+pre\s+pickup\b/i,"DP Delay Pre Pickup"],
+[/\bdp\s+delay\s+order\s+not\s+picked\b/i,"DP Delay Order Not Picked"],
+[/\bdp\s+arrived\s+late\b/i,"DP Arrived Late"],
+[/\bdp\s+unable\s+to\s+call\s+cx\b/i,"DP Unable to Call Cx"],
+[/\bdp\s+unresponsive\b/i,"DP Unresponsive"],
+[/\bdp\s+personal\s+emergency\b/i,"DP Personal Emergency"],
+[/\bdp\s+vehicle\s+breakdown\b/i,"DP Vehicle Breakdown"],
+[/\bdp\s+met\s+with\s+an?\s+accident(?:\/medical\s+emergency)?(?:\s*[-–:]?\s*(?:medical|high\s+severity))?/i,"DP Met with an Accident/Medical Emergency"],
+[/\bdp\s+physically\s+abused\s+by\s+stranger\b/i,"DP Physically Abused by Stranger - High Severity"],
+[/\bdp\s+physically\s+abused\s+by\s+cx\b/i,"DP Physically Abused by Cx - Medium Severity"],
+[/\bcx\s+assaulted\s+dp\b/i,"Cx Assaulted DP"],
+[/\border\s+snatched\s+by\s+(?:cx|customer)\b/i,"Order Snatched by Cx"],
+[/\border\s+snatched\s+by\s+stranger\b/i,"Order Snatched by Stranger"],
+[/\border\s+snatched\s+by\s+dp\b/i,"Order Snatched by DP"],
+[/\border\s+snatched\b/i,"Order Snatched"],
+[/\bregional\s+call\b/i,"Regional Call"],
+[/\bno\s+impact\s+on\s+dp\b/i,"No Impact on DP"],
+[/\bcod\s+qr\b/i,"COD QR Payment Issues"],
+[/\bmerchant\s+restricted\s+location\b/i,"Merchant Restricted Location"],
+[/\bunsafe\s+area\b/i,"Unsafe Area"],
+[/\bprohibited\s+customer\s+location\b/i,"Prohibited Customer Location"],
+[/\bwalker\s+not\s+responding\b/i,"Walker Not Responding"],
+[/\bconnectivity\s+issues?\s+with\s+dp\b/i,"Connectivity Issues with DP"],
+[/\bfacing\s+technical\s+issues?\b/i,"Facing Technical Issues"],
+[/\bpayment\s+failure\b/i,"Payment Failure"],
+[/\bdelay\s+promo\s+pitched\b/i,"Delay Promo Pitched"],
+[/\bauto\s+fare\s+addition\b/i,"Auto Fare Addition"],
+[/\bno\s+bag\/?t-?shirt\b/i,"No Bag/T-Shirt"],
+[/\bice-cream\s+bag\s+not\s+available\b/i,"Ice-Cream Bag Not Available"],
+[/\bmx\s+abused\s+support\b/i,"MX Abused Support"],
+[/\bcx\s+abused\s+support\b/i,"CX Abused Support"],
+[/\bmx\s+long\s+distance\b/i,"MX Long Distance"],
+[/\bincorrect\s+mx\s+contact\b/i,"Incorrect MX Contact"],
+[/\bcatalog\s+related\s+issues?\s+with\s+mx\b/i,"Catalog Related Issues with MX"],
+[/\binstructions\b/i,"Instructions"],
+[/\border\s+cancellation\b/i,"Order Cancellation"],
+[/\border\s+status\b/i,"Order Status"],
+[/\bscheduled\s+delivery\b/i,"Scheduled Delivery"],
+[/\bhigh\s+order\s+value\b/i,"High Order Value"],
+[/\brefund\s+requested\s+by\s+customer\b|\bcustomer\s+requested\s+refund\b/i,"Customer Requested Refund"],
+[/\bfake\s+or\s+duplicate\s+items?\b/i,"Fake or Duplicate Items"],
+[/\bfraud\s+suspect\b/i,"Fraud Suspect"],
+[/\bmx\s+refusing\s+to\s+give\s+order\b/i,"MX Refusing to Give Order"],
+[/\bmx\s+agreed\s+to\s+redispatch\b/i,"MX Agreed to ReDispatch"],
+[/\bcab\s+booking\s+attempted\b/i,"Cab Booking Attempted"],
+[/\bcab\s+booked\b/i,"Cab Booked"],
+[/\bdp\s+self\s+booked\s+cab\b/i,"DP Self Booked Cab"],
+[/\btrain\s+orders?\b/i,"Train Orders"],
+[/\birctc\s+train\s+orders?\b/i,"IRCTC Train Orders"],
+[/\bdelay\b/i,"Delay"],
+[/\brider\s+behaviour\b/i,"Rider Behaviour"],
+[/\bdp\s+was\s+rude\/?abusive\b/i,"DP Was Rude/Abusive"],
+[/\bcall\s+disconnected\s+by\s+dp\b/i,"Call Disconnected by DP"],
+[/\bpickup\s+confusion\b/i,"Pickup Confusion"],
+[/\bmx\s+physically\s+assaulted\s+dp\b/i,"MX Physically Assaulted DP"],
+[/\bopav\s+1st\s+rider\s+fault\b/i,"OPAV 1st Rider Fault"],
+[/\bmerchant\s+device\s+issue\b/i,"Merchant Device Issue"],
+[/\bDP\s+was\s+not\s+carrying\s+insulation\s+bag\b/i,"DP Was Not Carrying Insulation Bag/Not Wearing Required Gear"],
+[/\bDP\s+met\s+with\s+an?\s+accident\b/i,"DP Met with an Accident/Medical Emergency"],
+[/\bDP\s+met\s+with\s+an?\s+accident\/medical\s+emergency\b/i,"DP Met with an Accident/Medical Emergency"]
+];
+let data=[];const $=x=>document.getElementById(x);const clean=s=>(s||"").normalize("NFKC").replace(/[⭐🌟✨📍🚨✅❌➡️]/gu,"").replace(/[\u200B-\u200D\uFEFF]/g,"").replace(/[•·]+/g," ").replace(/\s+/g," ").trim().replace(/^[\s:>→|/;,\-–—]+|[\s:>→|/;,\-–—]+$/g,"");
+const title=s=>clean(s).toLowerCase().replace(/\b([a-z])/g,x=>x.toUpperCase()).replace(/\bCx\b/gi,"Cx").replace(/\bDp\b/gi,"DP").replace(/\bMx\b/gi,"MX").replace(/\bOpav\b/gi,"OPAV");
+const aliases={
+ "OPAV":"Order Picked by Another Rider","UMD":"Unable to Mark Deliver","UMA":"Unable to Mark Deliver","CDO":"Cx Denying Order",
+ "HOV":"High Order Value","IAR":"Issue Already Resolved","UMD":"Unable to Mark Deliver","OPAV":"Order Picked by Another Rider","MXRF":"MX Refusing to Give Order","NCDP":"Not Connected By DP","HWT":"High Wait Time at MX",
+ "CNR":"Cx Not Reachable/Responding","CAM":"Customer Address Mismatch","WUA":"Customer Address Mismatch","CFCA":"Cannot Find Customer Address",
+ "ICA":"Incomplete Cx Address","IOOS":"Item Out of Stock","ORI":"Order Related Info","DP":"Delivery Partner","MX":"Merchant"
+};
+const cityOnly=/^(delhi|mumbai|pune|kolkata|chennai|kochi|bangalore|bengaluru|hyderabad|ahmedabad|noida|gurgaon|gurugram|jaipur|lucknow|indore|patna|nagpur|surat|thiruvananthapuram|alappuzha|cherthala|bhilwara|shimla|nanded|tundla|ahmednagar|ludhiana|pathankot|tundla|nashik|vadodara|mysore|mangalore|thrissur|kollam|kottayam|palakkad|calicut|kozhikode|ernakulam|trivandrum)$/i;
+const canonicalTag=value=>{
+ const v=clean(value).replace(/[._]+/g," ").replace(/\s+/g," ").replace(/[.,!?]+$/g,"").trim();
+ if(!v||cityOnly.test(v))return "";
+ const upper=v.toUpperCase().replace(/[^A-Z0-9]/g,"");
+ if(aliases[upper])return aliases[upper];
+ // First match exact canonical labels or known full-form patterns.
+ for(const [re,label] of known){if(re.test(v))return label;}
+ const norm=x=>x.toLowerCase().replace(/[^a-z0-9]/g,"");
+ const target=norm(v), words=v.toLowerCase().match(/[a-z0-9]+/g)||[];
+ if(target.length<4)return "";
+ let best=null,score=0;
+ for(const [,label] of known){
+  const cand=norm(label), labelWords=label.toLowerCase().match(/[a-z0-9]+/g)||[];
+  if(cand===target)return label;
+  // Similarity only for genuine near-spelling variants; don't map arbitrary text by one shared word.
+  const common=words.filter(w=>labelWords.includes(w) && w.length>2).length;
+  const coverage=common/Math.max(words.filter(w=>w.length>2).length,1);
+  const lengthRatio=Math.min(target.length,cand.length)/Math.max(target.length,cand.length);
+  if(coverage>=0.75 && lengthRatio>=0.55 && coverage*lengthRatio>score){score=coverage*lengthRatio;best=label}
+ }
+ return score>=0.58?best:"";
+};
+const cityNames=[
+"Thiruvananthapuram","Visakhapatnam","Vijayawada","Bhubaneswar","Aurangabad","Mangaluru","Mangalore","Kozhikode","Thalassery","Pathanamthitta","Kasaragod","Kanhangad","Kottarakkara","Changanassery","Perinthalmanna","Manjeri","Tirur","Palakkad","Ernakulam","Thrissur","Kottayam","Alappuzha","Cherthala","Kollam","Kannur","Kochi","Calicut","Trivandrum",
+"Ahmednagar","Ahmedabad","Bengaluru","Bangalore","Hyderabad","Chandigarh","Coimbatore","Madurai","Tiruchirappalli","Trichy","Tirunelveli","Salem","Erode","Vellore","Thanjavur","Puducherry","Pondicherry","Tirupati","Nellore","Kurnool","Guntur","Warangal","Karimnagar","Mysuru","Mysore","Hubballi","Hubli","Belagavi","Belgaum","Davangere","Tumakuru","Tumkur","Shivamogga","Shimoga","Udupi","Hassan",
+"Delhi","New Delhi","Mumbai","Pune","Nagpur","Nashik","Thane","Navi Mumbai","Kolkata","Howrah","Siliguri","Durgapur","Asansol","Chennai","Gurgaon","Gurugram","Noida","Greater Noida","Ghaziabad","Faridabad","Jaipur","Jodhpur","Udaipur","Kota","Ajmer","Bikaner","Jaisalmer","Jalandhar","Ludhiana","Amritsar","Patiala","Bathinda","Pathankot","Shimla","Manali","Dharamshala","Dehradun","Haridwar","Roorkee","Rudrapur","Bareilly","Moradabad","Meerut","Agra","Mathura","Kanpur","Lucknow","Varanasi","Prayagraj","Allahabad","Gorakhpur","Jhansi","Aligarh","Firozabad","Ayodhya","Patna","Gaya","Muzaffarpur","Bhagalpur","Ranchi","Jamshedpur","Dhanbad","Bokaro","Raipur","Bilaspur","Durg","Bhilai","Indore","Bhopal","Gwalior","Jabalpur","Ujjain","Sagar","Rewa","Surat","Vadodara","Baroda","Rajkot","Bhavnagar","Jamnagar","Junagadh","Gandhinagar","Anand","Vapi","Goa","Panaji","Margao","Vasco","Kochi","Kozhikode","Alappuzha","Cherthala","Bhilwara","Nanded","Tundla","Ahmednagar","Ludhiana","Pathankot"
+].sort((a,b)=>b.length-a.length);
+function extractCity(text, parts, tagidx){
+ const normalizeCityText=v=>clean(v)
+  .replace(/[\u200B-\u200D\uFEFF]/g,"")
+  .replace(/[_.,!?;:()[\]{}"'`]+/g," ")
+  .replace(/\s+/g," ").trim();
+ const candidates=parts.filter((p,i)=>i!==tagidx);
+ // 1) Exact city segment match.
+ for(const p of candidates){
+  const n=normalizeCityText(p).toLowerCase();
+  const exact=cityNames.find(c=>c.toLowerCase()===n);
+  if(exact)return exact;
+ }
+ // 2) Search every word in the entire message body, not only the final segment.
+ // Longest city names are tested first so "New Delhi" wins over "Delhi".
+ const whole=normalizeCityText(String(text||"").replace(/\b\d{10}\b/g," "));
+ const lower=whole.toLowerCase();
+ const matches=[];
+ for(const cityName of cityNames){
+  const escaped=cityName.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  // Allow punctuation/extra whitespace between words in multi-word city names.
+  const flexible=escaped.split(/\s+/).join("[\\s,._-]+");
+  const re=new RegExp("(^|[^a-z])("+flexible+")(?=$|[^a-z])","ig");
+  let m;
+  while((m=re.exec(lower))!==null){
+   matches.push({name:cityName,index:m.index,length:m[2].length});
+   if(m[0].length===0)re.lastIndex++;
+  }
+ }
+ if(matches.length){
+  // Prefer the longest specific city/locality name, then the first occurrence.
+  matches.sort((a,b)=>b.length-a.length||a.index-b.index);
+  return matches[0].name;
+ }
+ // 3) Handle an unlisted city/locality segment without misusing a known issue tag.
+ for(const p of candidates){
+  const n=normalizeCityText(p);
+  if(!n||/^(break|after|before|done|thanks|thank you|ok|okay)$/i.test(n))continue;
+  if(canonicalTag(n))continue;
+  // Strip issue phrases already identified, then keep any remaining locality words.
+  let remainder=n;
+  for(const [,label] of known){
+   remainder=remainder.replace(new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"ig")," ");
+  }
+  remainder=normalizeCityText(remainder);
+  if(remainder && !canonicalTag(remainder))return title(remainder);
+ }
+ return "";
+}
+function parseLine(line){
+ let s=clean(line); if(!s)return null;
+ s=s.replace(/^\[?\d{1,2}:\d{2}(?:\s?[AP]M)?[,]?\s+\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}\]?\s*/i,"");
+ s=s.replace(/^\[[^\]]+\]\s*/,"");
+ let ix=s.indexOf(":"); if(ix>=0&&ix<90&&!/^\d{7,}/.test(s))s=s.slice(ix+1);
+ const m=s.match(/\b\d{10}\b/); if(!m)return null;
+ const id=m[0], rest=s.replace(id," ");
+ const parts=rest.split(/\s*(?:\/\/|\/|>|→|\||;|\t|\s+[–—-]\s+)\s*/).map(clean).filter(Boolean)
+  .map(p=>p.replace(/^[#*~`]+|[#*~`]+$/g,"").replace(/[.,!?]+$/g,"").trim())
+  .filter(p=>p&&!/^(break|after|before|done|thanks|thank you|ok|okay)$/i.test(p));
+ let tag="",tagidx=-1;
+ // First choose an explicit, canonical issue segment, preferring the most descriptive match.
+ let found=[];
+ for(let i=0;i<parts.length;i++){
+  const candidate=canonicalTag(parts[i]);
+  if(candidate)found.push({i,tag:candidate,score:parts[i].length});
+ }
+ found.sort((a,b)=>b.score-a.score);
+ if(found.length){tag=found[0].tag;tagidx=found[0].i;}
+ if(!tag){
+  // If an issue appears alongside a city in one segment, remove the city and match the remaining issue text.
+  for(let i=0;i<parts.length;i++){
+   let candidate=parts[i];
+   for(const c of cityNames){
+    candidate=candidate.replace(new RegExp("(^|[^A-Za-z])"+c.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"($|[^A-Za-z])","ig")," ").trim();
+   }
+   const match=canonicalTag(candidate);
+   if(match){tag=match;tagidx=i;break;}
+  }
+ }
+ if(!tag){
+  const nonCity=parts.findIndex(p=>!cityNames.some(c=>c.toLowerCase()===p.toLowerCase()));
+  if(nonCity>=0){tagidx=nonCity;tag=canonicalTag(parts[nonCity])||"Unknown Issue";}
+ }
+ const city=extractCity(s,parts,tagidx)||$("cityfallback").value;
+ tag=canonicalTag(tag)||tag||"Unknown Issue";
+ return {id,tag,city:title(city),review:tag==="Unknown Issue"||!canonicalTag(tag)||!city||city==="City Not Provided"};
+}
+function process(){let lines=$("raw").value.split(/\r?\n/);data=lines.map(parseLine).filter(Boolean);render();$("lines").textContent=lines.filter(x=>x.trim()).length+" lines";$("status").textContent=`Processed ${lines.length} lines. Found ${data.length} order ID record(s).`}
+function sortRecords(){data.sort((a,b)=>String(a.id).localeCompare(String(b.id),undefined,{numeric:true}));render();$("status").textContent="Records sorted by Order ID.";}
+function render(){let o=$("out");o.innerHTML="";if(!data.length)o.innerHTML='<tr><td colspan="5">No order IDs found. Check the pasted format.</td></tr>';data.forEach((r,i)=>{let tr=document.createElement("tr");["id","tag","city"].forEach(k=>{let td=document.createElement("td");td.contentEditable="true";td.textContent=r[k]||"";if(k==="city"&&(!r.city||r.city==="City Not Provided"))td.className="missing";td.oninput=()=>{data[i][k]=td.textContent.trim();data[i].review=!/^\d{10}$/.test(data[i].id)||!data[i].tag||!data[i].city||data[i].city==="City Not Provided";preview();stats()};tr.appendChild(td)});let td=document.createElement("td");td.textContent=r.review?"Check":"OK";td.style.color=r.review?"#b54735":"#267454";td.style.fontWeight="bold";tr.appendChild(td);let act=document.createElement("td");let del=document.createElement("button");del.textContent="Delete";del.style.cssText="padding:5px 8px;color:#a33;border-color:#e8c9c1;font-size:11px";del.onclick=()=>{data.splice(i,1);render();$("status").textContent="Entry deleted."};act.appendChild(del);tr.appendChild(act);o.appendChild(tr)});preview();stats()}
+function stats(){$("n").textContent=data.length;$("t").textContent=new Set(data.map(r=>r.tag).filter(Boolean)).size;$("c").textContent=new Set(data.map(r=>r.city).filter(c=>c&&c!=="City Not Provided")).size;$("r").textContent=data.filter(r=>r.review||r.city==="City Not Provided"||r.tag==="Unknown Issue").length;$("rowscount").textContent=data.length+" rows";summaries()}
+function summaries(){for(const [key,id,label] of [["tag","issueSummary","Issue type"],["city","citySummary","City"]]){const counts=new Map();data.forEach(r=>{let v=(r[key]||"").trim()||(key==="city"?"City Not Provided":"Unknown Issue");counts.set(v,(counts.get(v)||0)+1)});const b=$(id);b.innerHTML="";if(!counts.size){b.innerHTML="<tr><td colspan='3'>No data yet</td></tr>";continue}Array.from(counts.entries()).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).forEach(([name,count])=>{let tr=document.createElement("tr");[name,count,(count/Math.max(data.length,1)*100).toFixed(1)+"%"].forEach(v=>{let td=document.createElement("td");td.textContent=v;tr.appendChild(td)});b.appendChild(tr)})}}
+function preview(){let b=$("prevrows");b.innerHTML="";if(!data.length)b.innerHTML="<tr><td colspan='3'>No results yet</td></tr>";data.forEach(r=>{let tr=document.createElement("tr");[r.id,r.tag,r.city].forEach(v=>{let td=document.createElement("td");td.textContent=v||"";tr.appendChild(td)});b.appendChild(tr)});$("date").textContent=new Date().toLocaleString()}
+function tsv(){return data.map(r=>[r.id,r.tag,r.city].map(x=>String(x||"").replace(/[\t\r\n]+/g," ").trim()).join(" - ")).join("\n")}
+function csv(){return["Order ID,Tag,City",...data.map(r=>[r.id,r.tag,r.city].map(x=>'"'+String(x||"").replace(/"/g,'""')+'"').join(","))].join("\r\n")}
+function save(blob,name){let u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+async function imageBlob(){
+ const pad=42,row=48,head=118,tableW=1120,w=tableW+pad*2,h=head+38+row*Math.max(data.length,1)+pad;
+ const c=document.createElement("canvas");c.width=w*2;c.height=h*2;const x=c.getContext("2d");x.scale(2,2);
+ x.fillStyle="#f2f5f3";x.fillRect(0,0,w,h);
+ x.fillStyle="#075e32";x.fillRect(0,0,w,head);
+ x.fillStyle="#f3d477";x.font="bold 15px Arial";x.textAlign="center";x.fillText("OPERATIONS  •  WHATSAPP ISSUE TRACKER",w/2,29);
+ x.fillStyle="#ffffff";x.font="bold 30px Arial";x.fillText("Order ID – Tag – City",w/2,68);
+ x.fillStyle="#e2f2e7";x.font="15px Arial";x.fillText(data.length+" records  •  "+new Date().toLocaleString(),w/2,96);
+ const tx=pad,tw=tableW,top=head+18,cols=[tx+22,tx+tw*.34,tx+tw*.68],widths=[tw*.32,tw*.34,tw*.34];
+ x.fillStyle="#dcece2";x.fillRect(tx,top,tw,38);x.strokeStyle="#9ab9a5";x.lineWidth=1;x.strokeRect(tx,top,tw,38);
+ x.textAlign="left";x.fillStyle="#17452d";x.font="bold 16px Arial";
+ ["ORDER ID","TAG / ISSUE TYPE","CITY"].forEach((v,i)=>x.fillText(v,cols[i],top+25));
+ data.forEach((r,i)=>{
+  const y=top+38+i*row;x.fillStyle=i%2?"#f4f8f5":"#ffffff";x.fillRect(tx,y,tw,row);
+  x.strokeStyle="#c8d6cd";x.lineWidth=1;x.strokeRect(tx,y,tw,row);
+  x.beginPath();x.moveTo(tx+widths[0],y);x.lineTo(tx+widths[0],y+row);x.moveTo(tx+widths[0]+widths[1],y);x.lineTo(tx+widths[0]+widths[1],y+row);x.stroke();
+  x.fillStyle="#202a24";x.font="16px Arial";x.textAlign="left";
+  [r.id,r.tag,r.city].forEach((v,j)=>{let t=String(v||"");while(x.measureText(t).width>widths[j]-34&&t.length>4)t=t.slice(0,-4)+"…";x.fillText(t,cols[j],y+29)});
+ });
+ x.strokeStyle="#a6b9ad";x.lineWidth=1.5;x.strokeRect(tx,top,tw,38+row*data.length);
+ return new Promise(res=>c.toBlob(res,"image/png"));
+}
+$("process").onclick=$("process2").onclick=process;$("raw").value="";render();
+$("copy").onclick=async()=>{if(!data.length)return alert("Process messages first.");try{await navigator.clipboard.writeText(tsv());$("status").textContent=""}catch(e){let t=document.createElement("textarea");t.value=tsv();document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();$("status").textContent=""}};
+$("csv").onclick=()=>data.length?save(new Blob(["\ufeff"+csv()],{type:"text/csv;charset=utf-8"}),"whatsapp_order_id_tag_city_excel.csv"):alert("Process messages first.");
+$("png").onclick=async()=>{if(!data.length)return alert("Process messages first.");try{const b=await imageBlob();await navigator.clipboard.write([new ClipboardItem({"image/png":b})]);$("status").textContent="Image copied to clipboard. Paste it into chat, email, or a document."}catch(e){alert("Clipboard image access was blocked by this browser. Use Copy Table Image to save a PNG instead.")}};
+$("copyimg").onclick=async()=>{if(!data.length)return alert("Process messages first.");try{let b=await imageBlob();save(b,"whatsapp_order_tracker.png");$("status").textContent="PNG image saved."}catch(e){alert("Could not create the image in this browser.")}};
+$("clear").onclick=()=>{$("raw").value="";data=[];render();$("status").textContent="Cleared."};$("add").onclick=()=>{data.push({id:"",tag:"",city:"",review:true});render()};$("remove").onclick=()=>{data=data.filter(r=>/^\d{10}$/.test(r.id));render()};let autoProcessTimer; $("raw").oninput=()=>{$("lines").textContent=$("raw").value.split(/\r?\n/).filter(x=>x.trim()).length+" lines";clearTimeout(autoProcessTimer);autoProcessTimer=setTimeout(process,350)}; $("raw").addEventListener("paste",()=>setTimeout(process,80));
+
+function makeContributionImage(kind){
+ const isCity=kind==="city";
+ const groups={};
+ data.forEach(r=>{
+  const k=clean(isCity?r.city:r.tag)||"Unknown";
+  groups[k]=(groups[k]||0)+1;
+ });
+ const entries=Object.entries(groups).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+ const total=entries.reduce((n,e)=>n+e[1],0);
+ const title=isCity?"City wise contribution":"Tag wise contribution";
+ // 4K UHD landscape export (3840 x proportional height).
+ const W=3840, scale=3, rowH=120, headerH=390, footerH=54, pad=42;
+ const H=headerH+entries.length*rowH+footerH;
+ const canvas=document.createElement("canvas");canvas.width=W;canvas.height=H;
+ const ctx=canvas.getContext("2d");
+ ctx.fillStyle="#f3f7f4";ctx.fillRect(0,0,W,H);
+ // Elegant emerald-and-gold framed workbook card.
+ ctx.save();
+ ctx.shadowColor="rgba(4,45,26,.20)";ctx.shadowBlur=24;ctx.shadowOffsetY=10;
+ ctx.fillStyle="#ffffff";ctx.fillRect(36,36,W-72,H-72);
+ ctx.restore();
+ const grad=ctx.createLinearGradient(0,0,W,headerH);
+ grad.addColorStop(0,"#064c2d");grad.addColorStop(.48,"#08713e");grad.addColorStop(1,"#064c2d");
+ ctx.fillStyle=grad;ctx.fillRect(pad,pad,W-pad*2,headerH-12);
+ // Subtle diagonal accents.
+ ctx.save();ctx.globalAlpha=.15;ctx.strokeStyle="#c9a84b";ctx.lineWidth=5;
+ for(let x=-300;x<W+300;x+=130){ctx.beginPath();ctx.moveTo(x,42);ctx.lineTo(x-300,headerH-12);ctx.stroke();}
+ ctx.restore();
+ ctx.textAlign="center";ctx.textBaseline="alphabetic";
+ ctx.fillStyle="#ffffff";ctx.font="bold 136px Arial";ctx.fillText("Real Time Order IDs",W/2,190);
+ ctx.fillStyle="#f6d777";ctx.fillRect(W/2-340,220,680,5);
+ ctx.fillStyle="#e4f4e9";ctx.font="bold 78px Arial";ctx.fillText(title,W/2,310);
+ const tableY=headerH+4;
+ const left=pad, right=W-pad;
+ const numW=180, labelW=1840, countW=480, contributionW=(right-left)-numW-labelW-countW;
+ const x0=left, x1=x0+numW, x2=x1+labelW, x3=x2+countW, x4=right;
+ ctx.fillStyle="#cdebd6";ctx.fillRect(left,tableY,right-left,132);
+ ctx.fillStyle="#123e2b";ctx.font="bold 56px Arial";ctx.textBaseline="middle";
+ ctx.textAlign="center";ctx.fillText("#",x0+numW/2,tableY+66);
+ ctx.textAlign="left";ctx.fillText(isCity?"City":"Tag / Issue Type",x1+36,tableY+66);
+ ctx.textAlign="center";ctx.fillText("Count",x2+countW/2,tableY+66);
+ ctx.fillText("Contribution",x3+contributionW/2,tableY+66);
+ entries.forEach(([label,count],i)=>{
+  const y=tableY+132+i*rowH;
+  ctx.fillStyle=i%2===0?"#ffffff":"#e8f4eb";ctx.fillRect(left,y,right-left,rowH);
+  ctx.strokeStyle="#bdd3c4";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(left,y+rowH);ctx.lineTo(right,y+rowH);ctx.stroke();
+  ctx.strokeStyle="#c4d7ca";ctx.beginPath();ctx.moveTo(x1,y);ctx.lineTo(x1,y+rowH);ctx.moveTo(x2,y);ctx.lineTo(x2,y+rowH);ctx.moveTo(x3,y);ctx.lineTo(x3,y+rowH);ctx.stroke();
+  ctx.fillStyle="#153a29";ctx.font="bold 52px Arial";ctx.textAlign="center";ctx.fillText(String(i+1),x0+numW/2,y+rowH/2);
+  ctx.fillStyle="#202b24";ctx.font="52px Arial";ctx.textAlign="left";
+  let display=label;while(ctx.measureText(display).width>labelW-72&&display.length>3)display=display.slice(0,-2)+"…";
+  ctx.fillText(display,x1+36,y+rowH/2);
+  ctx.fillStyle="#173e2a";ctx.font="bold 54px Arial";ctx.textAlign="center";ctx.fillText(String(count),x2+countW/2,y+rowH/2);
+  const pct=total?count/total*100:0;
+  const barX=x3+48, barY=y+rowH/2-24, barW=contributionW-220, barH=48;
+  ctx.fillStyle="#d8e1dc";ctx.fillRect(barX,barY,barW,barH);
+  // Conditional formatting: high contribution = red, middle = yellow, low = green.
+  const maxPct=entries.length?Math.max(...entries.map(e=>total?e[1]/total*100:0)):0;
+  const ratio=maxPct?pct/maxPct:0;
+  const barColor=ratio>=0.75?"#d93025":ratio>=0.35?"#f9ab00":"#188038";
+  const barGrad=ctx.createLinearGradient(barX,0,barX+barW,0);barGrad.addColorStop(0,barColor);barGrad.addColorStop(1,barColor);
+  ctx.fillStyle=barGrad;ctx.fillRect(barX,barY,barW*pct/100,barH);
+  ctx.fillStyle="#173e2a";ctx.font="bold 50px Arial";ctx.textAlign="right";ctx.fillText(pct.toFixed(1)+"%",x4-28,y+rowH/2);
+ });
+ // Single centered, subtle document watermark. Drawn once above the table for consistent visibility.
+ ctx.save();
+ ctx.globalAlpha=0.075;
+ ctx.fillStyle="#174c35";
+ ctx.textAlign="center";
+ ctx.textBaseline="middle";
+ ctx.font="600 230px 'Aptos', 'Segoe UI', Arial, sans-serif";
+ ctx.letterSpacing="2px";
+ ctx.translate(W/2, headerH+(H-headerH-footerH)/2);
+ ctx.fillText("Abhijith",0,0);
+ ctx.restore();
+ ctx.strokeStyle="#b49a4a";ctx.lineWidth=8;ctx.strokeRect(24,24,W-48,H-48);
+ ctx.strokeStyle="#08713e";ctx.lineWidth=5;ctx.strokeRect(36,36,W-72,H-72);
+ return new Promise(resolve=>canvas.toBlob(resolve,"image/png"));
+}
+async function copyContributionImage(kind){
+ if(!data.length){alert("Process messages first.");return;}
+ try{
+  const blob=await makeContributionImage(kind);
+  await navigator.clipboard.write([new ClipboardItem({"image/png":blob})]);
+  const status=$("status");if(status)status.textContent=(kind==="city"?"City-wise":"Issue-wise")+" contribution image copied to clipboard.";
+ }catch(err){
+  alert("Clipboard image access was blocked by this browser. Open the tracker in a supported browser context (HTTPS or localhost) and try again.");
+ }
+}
+
+
+document.addEventListener("DOMContentLoaded",()=>{
+ const issueBtn=document.getElementById("copyIssueImage");
+ const cityBtn=document.getElementById("copyCityImage");
+ if(issueBtn)issueBtn.addEventListener("click",()=>copyContributionImage("issue"));
+ if(cityBtn)cityBtn.addEventListener("click",()=>copyContributionImage("city"));
+});
+
+</script>
+<div class="sheet-tabs" aria-label="Workbook tabs">
+ <span class="active">▦ Order Tracker</span><span>Data View</span><span>Analysis</span><span>＋</span>
+</div>
+
+
+<script>
+(function(){
+ const toggle=document.getElementById("themeToggle");
+ const label=document.getElementById("themeToggleLabel");
+ const profile=document.getElementById("profileButton");
+ const popover=document.getElementById("profilePopover");
+ if(toggle){
+  toggle.addEventListener("click",()=>{
+   const isGrey=document.body.classList.toggle("grey-excel");
+   if(label)label.textContent=isGrey?"Switch to Green Excel Theme":"Switch to Grey Excel Theme";
+   toggle.setAttribute("aria-pressed",String(isGrey));
+  });
+ }
+ if(profile&&popover){
+  profile.addEventListener("click",e=>{
+   e.stopPropagation();
+   const open=popover.hidden;
+   popover.hidden=!open;
+   profile.setAttribute("aria-expanded",String(open));
+  });
+  document.addEventListener("click",e=>{
+   if(!popover.hidden&&!popover.contains(e.target)&&!profile.contains(e.target)){
+    popover.hidden=true;profile.setAttribute("aria-expanded","false");
+   }
+  });
+  document.addEventListener("keydown",e=>{
+   if(e.key==="Escape"){popover.hidden=true;profile.setAttribute("aria-expanded","false");}
+  });
+ }
+})();
+</script>
+
+
+<script>
+(function(){
+ const ribbonActions={
+  "Paste":"Paste text into the Raw WhatsApp Messages box, then choose Process Messages.",
+  "Copy":"Copy the selected result or use Copy as Text to copy all extracted rows.",
+  "Format Painter":"Demo only: Excel-style formatting controls are visual. Use the tracker controls to format/export data.",
+  "Conditional Formatting":"Contribution bars use red for high, yellow for medium, and green for low contribution.",
+  "Format as Table":"Worksheet rows already use alternating Excel-style banding.",
+  "Cell Styles":"Switch between Green Excel Theme and Grey Excel Theme for alternate worksheet styling.",
+  "Insert":"Demo only: use Add Row to insert a new tracker row.",
+  "Delete":"Use the Delete icon in a result row to remove that entry.",
+  "Format":"Worksheet layout is optimized for spreadsheet-style review.",
+  "Sort & Filter":"Use the result table headers to sort the visible records.",
+  "Find & Select":"Use your browser's Ctrl+F to find visible text in the tracker."
+ };
+ function tip(message){
+  let t=document.getElementById("ribbonTip");
+  if(!t){t=document.createElement("div");t.id="ribbonTip";t.className="ribbon-tip";document.body.appendChild(t)}
+  t.textContent=message;
+  clearTimeout(window.__ribbonTipTimer);
+  window.__ribbonTipTimer=setTimeout(()=>t.remove(),3400);
+ }
+ function dialog(title,body,buttons){
+  const back=document.createElement("div");back.className="excel-dialog-backdrop";
+  back.innerHTML='<div class="excel-dialog" role="dialog" aria-modal="true"><div class="excel-dialog-head"><span></span><button aria-label="Close">×</button></div><div class="excel-dialog-body"></div><div class="excel-dialog-actions"></div></div>';
+  back.querySelector(".excel-dialog-head span").textContent=title;
+  back.querySelector(".excel-dialog-body").textContent=body;
+  const actions=back.querySelector(".excel-dialog-actions");
+  buttons.forEach(b=>{const btn=document.createElement("button");btn.textContent=b.label;if(b.primary)btn.className="confirm";btn.addEventListener("click",()=>{back.remove();if(b.action)b.action()});actions.appendChild(btn)});
+  back.querySelector(".excel-dialog-head button").addEventListener("click",()=>back.remove());
+  back.addEventListener("click",e=>{if(e.target===back)back.remove()});
+  document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){back.remove();document.removeEventListener("keydown",esc)}});
+  document.body.appendChild(back);
+ }
+ // Ribbon icons: realistic hover/click feedback, without pretending the static ribbon is full Excel.
+ document.querySelectorAll(".excel-ribbon .ribbon-icon").forEach(icon=>{
+  const label=icon.querySelector("span")?.textContent.trim()||"Excel tool";
+  icon.setAttribute("role","button");icon.setAttribute("tabindex","0");icon.setAttribute("aria-label",label);
+  const activate=()=>{
+   icon.classList.add("is-active");setTimeout(()=>icon.classList.remove("is-active"),650);
+   const action=ribbonActions[label];
+   if(label==="Process"){
+    document.getElementById("process")?.click();tip("Processing the pasted WhatsApp messages.");
+   }else if(label==="Copy"){
+    document.getElementById("copy")?.click();tip("Copy as Text action triggered.");
+   }else if(label==="Delete"){
+    tip("To delete a specific record, use its row's Delete action.");
+   }else if(label==="Conditional Formatting"||label==="Format as"||label==="Cell Styles"){
+    dialog(label,"This is a realistic Excel-style preview. "+(action||"Use the tracker controls to work with your data."),[{label:"Got it",primary:true}]);
+   }else if(action){tip(action)}
+   else {tip(label+" ribbon control selected (visual demo).")}
+  };
+  icon.addEventListener("click",activate);
+  icon.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();activate()}});
+ });
+ // Workbook tabs switch between actual sections where possible, with friendly demo dialogs otherwise.
+ const tabTargets={
+  "Order Tracker":document.querySelector(".layout"),
+  "Data View":document.querySelector(".layout section:nth-child(2)"),
+  "Analysis":document.querySelector(".issue-panel")
+ };
+ document.querySelectorAll(".sheet-tabs span").forEach(tab=>{
+  const label=tab.textContent.replace(/[▦▤▥＋]/g,"").trim();
+  if(!label)return;
+  tab.setAttribute("role","button");tab.setAttribute("tabindex","0");
+  const activate=()=>{
+   if(tabTargets[label]){
+    document.querySelectorAll(".sheet-tabs span").forEach(x=>x.classList.remove("active"));
+    tab.classList.add("active");tab.scrollIntoView({behavior:"smooth",block:"nearest"});
+    tabTargets[label].scrollIntoView({behavior:"smooth",block:"start"});
+    tip(label+" worksheet selected.");
+   }else if(label==="＋"){
+    document.getElementById("add")?.click();
+   }
+  };
+  tab.addEventListener("click",activate);
+  tab.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();activate()}});
+ });
+ // Ribbon tabs respond visually and explain the demo behavior.
+ document.querySelectorAll(".excel-tabs>span:not(.profile)").forEach(tab=>{
+  const label=tab.textContent.trim();
+  tab.addEventListener("click",()=>{
+   document.querySelectorAll(".excel-tabs>span").forEach(x=>x.classList.remove("selected"));
+   tab.classList.add("selected");
+   if(label==="Home"){tip("Home ribbon selected.");return}
+   const descriptions={
+    File:"File menu preview: use Download as Excel to export the current records.",
+    Insert:"Insert tab preview: use Add Row to add an editable record.",
+    "Page Layout":"Page Layout preview: exported contribution images use the report layout and watermark.",
+    Formulas:"Formula tools preview: contribution percentages are calculated from the current record count.",
+    Data:"Data tab preview: use the table and analysis panels to review and compare records.",
+    Review:"Review tab preview: edit cells directly and check rows marked Needs Review.",
+    View:"View tab preview: use workbook tabs and browser zoom to adjust your view.",
+    Help:"Help: paste WhatsApp messages, process them, review uncertain rows, then export."
+   };
+   /* The selected ribbon tab is handled by the realistic dropdown menu layer below. */
+  });
+ });
+ // Search box works against the visible tracker content.
+ const search=document.querySelector(".excel-search");
+ if(search){
+  search.setAttribute("role","button");search.setAttribute("tabindex","0");search.title="Search tracker";
+  const openSearch=()=>{
+   dialog("Search tracker","Enter an Order ID, issue type, or city to find matching rows.",[
+    {label:"Cancel"},
+    {label:"Search",primary:true,action:()=>{
+     const value=window.__trackerSearchValue;
+     if(!value)return;
+     const rows=[...document.querySelectorAll("#out tr")];
+     let found=null;
+     for(const row of rows){if(row.innerText.toLowerCase().includes(value.toLowerCase())){found=row;break}}
+     if(found){found.scrollIntoView({behavior:"smooth",block:"center"});found.style.outline="3px solid #e0b84f";setTimeout(()=>found.style.outline="",1800);tip("Matching row highlighted.")}
+     else tip("No visible result matched: "+value);
+     window.__trackerSearchValue="";
+    }}
+   ]);
+   const body=document.querySelector(".excel-dialog-body");
+   if(body){
+    const input=document.createElement("input");input.type="search";input.placeholder="Search orders, tags, cities…";
+    input.style.cssText="width:100%;margin-top:12px;padding:9px;border:1px solid #c7ceca;border-radius:4px";
+    input.addEventListener("input",()=>window.__trackerSearchValue=input.value.trim());
+    body.appendChild(input);input.focus();
+   }
+  };
+  search.addEventListener("click",openSearch);search.addEventListener("keydown",e=>{if(e.key==="Enter"){openSearch()}});
+ }
+})();
+</script>
+
+
+<script>
+(function(){
+ const raw=document.getElementById("raw");
+ const clear=document.getElementById("clearPaste");
+ if(clear&&raw){
+  clear.addEventListener("click",()=>{
+   raw.value="";
+   raw.dispatchEvent(new Event("input",{bubbles:true}));
+   const count=document.getElementById("lines");
+   if(count)count.textContent="0 lines";
+   raw.focus();
+  });
+ }
+})();
+</script>
+
+
+<script>
+(function(){
+ const clock=document.getElementById("liveClock");
+ const status=document.getElementById("liveStatus");
+ function tick(){
+  if(!clock)return;
+  const now=new Date();
+  clock.textContent=new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(now);
+  if(status)status.title="Local system time • "+now.toLocaleDateString()+" • Interface active";
+ }
+ tick();setInterval(tick,1000);
+ // Brief shimmer on the LIVE indicator when the page is opened.
+ if(status){status.style.transition="filter .3s ease";status.addEventListener("mouseenter",()=>status.style.filter="brightness(1.18)");status.addEventListener("mouseleave",()=>status.style.filter="brightness(1)")}
+})();
+</script>
+
+
+<script>
+(function(){
+ const tabs=[...document.querySelectorAll(".excel-tabs>span:not(.profile)")];
+ const menuMap={
+  File:[["New","New workbook preview"],["Open","Open workbook preview"],["Save","This HTML tracker runs locally; no workbook file was changed."],["Print","Use your browser's Print command to print this view."],["Export","Use Download as Excel in the tracker toolbar."]],
+  Insert:[["Table","Excel table style preview"],["Chart","Analysis charts are shown in the Analysis worksheet"],["Picture","Image export is available in the tracker toolbar"]],
+  "Page Layout":[["Margins","Normal page margins preview"],["Orientation","Landscape report preview"],["Scale to Fit","Use browser zoom to adjust the visible workspace"]],
+  Formulas:[["AutoSum","Formula ribbon preview"],["Calculation Options","Contribution percentages are calculated by the tracker"],["Show Formulas","Formula view preview"]],
+  Data:[["Sort","Sort preview — original data remains unchanged"],["Filter","Filter controls preview"],["Remove Duplicates","Preview only — no records will be modified"]],
+  Review:[["Spelling","Review preview"],["New Comment","Comment preview"],["Protect Sheet","Protection preview"]],
+  View:[["Normal","Normal worksheet view"],["Page Layout","Page layout preview"],["Zoom","Use browser zoom for a larger or smaller view"]],
+  Help:[["Help","Paste WhatsApp text, process it, review results, then export"],["Keyboard Shortcuts","Ctrl+F searches visible browser content"],["About","Real Time Order ID Tracker"]]
+ };
+ function closeMenu(){document.querySelectorAll(".excel-menu-preview").forEach(x=>x.remove())}
+ function showMenu(anchor,label){
+  closeMenu();const items=menuMap[label];if(!items)return;
+  const menu=document.createElement("div");menu.className="excel-menu-preview";
+  const title=document.createElement("div");title.className="menu-title";title.textContent=label;menu.appendChild(title);
+  items.forEach(([name,desc])=>{const b=document.createElement("button");b.textContent=name;b.addEventListener("click",()=>{closeMenu();const toast=document.createElement("div");toast.className="ribbon-tip";toast.textContent=desc;document.body.appendChild(toast);setTimeout(()=>toast.remove(),2800)});menu.appendChild(b)});
+  const note=document.createElement("div");note.className="menu-note";note.textContent="Interface preview • workbook data unchanged";menu.appendChild(note);
+  document.body.appendChild(menu);const r=anchor.getBoundingClientRect();menu.style.left=Math.min(r.left,innerWidth-menu.offsetWidth-8)+"px";menu.style.top=Math.min(r.bottom,innerHeight-menu.offsetHeight-8)+"px";
+ }
+ tabs.forEach(tab=>{
+  const label=tab.textContent.trim();
+  if(label==="Home")return;
+  tab.addEventListener("click",e=>{
+   e.stopPropagation();
+   if(label==="File"||menuMap[label]){showMenu(tab,label)}
+  });
+ });
+ document.addEventListener("click",e=>{if(!e.target.closest(".excel-menu-preview"))closeMenu()});
+ document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
+ // Header cells give familiar selection feedback; sorting/filtering stays preview-only.
+ document.querySelectorAll("table thead th").forEach(th=>{
+  th.tabIndex=0;th.title="Select column";
+  const select=()=>{document.querySelectorAll("table thead th").forEach(x=>x.style.boxShadow="");th.style.boxShadow="inset 0 -3px #217346";};
+  th.addEventListener("click",select);th.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select()}});
+ });
+ // Status bar zoom controls, if present, behave as visual-only UI.
+ document.querySelectorAll(".zoom-control,.zoom-minus,.zoom-plus").forEach(el=>{
+  el.addEventListener("click",()=>{el.classList.toggle("is-active");setTimeout(()=>el.classList.remove("is-active"),500)});
+ });
+})();
+</script>
+
+
+<script>
+(function(){
+ const body=document.body;
+ let flashTimer;
+ function status(text){
+  let el=document.getElementById("excelStatusFlash");
+  if(!el){el=document.createElement("div");el.id="excelStatusFlash";el.className="excel-status-flash";document.body.appendChild(el)}
+  el.textContent=text;clearTimeout(flashTimer);flashTimer=setTimeout(()=>el.remove(),2200);
+ }
+ // A small, realistic Key Tips overlay when Alt is pressed, dismissed by Escape or another key.
+ let keytips=null;
+ function showKeyTips(){
+  if(keytips)return;
+  keytips=document.createElement("div");keytips.className="excel-keytips";
+  ["F File","H Home","N Insert","P Page Layout","M Formulas","A Data","R Review","W View"].forEach(t=>{let b=document.createElement("span");b.textContent=t;keytips.appendChild(b)});
+  document.body.appendChild(keytips);
+ }
+ function hideKeyTips(){if(keytips){keytips.remove();keytips=null}}
+ document.addEventListener("keydown",e=>{
+  if(e.key==="Alt"&&!e.repeat){showKeyTips();return}
+  if(keytips){hideKeyTips();const k=e.key.toUpperCase();const map={F:"File",H:"Home",N:"Insert",P:"Page Layout",M:"Formulas",A:"Data",R:"Review",W:"View"};const tab=[...document.querySelectorAll(".excel-tabs>span")].find(x=>x.textContent.trim()===map[k]);if(tab){tab.click();e.preventDefault()}return}
+  if(e.key==="Escape")hideKeyTips();
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="f"){e.preventDefault();document.querySelector(".excel-search")?.click();status("Search tracker")}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="s"){e.preventDefault();status("Tracker runs locally in this browser; use Download as Excel to export a copy.")}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="p"){status("Use your browser print dialog to print this worksheet.")}
+ });
+ // Close Alt tips after focus leaves and preserve native browser shortcuts otherwise.
+ window.addEventListener("blur",hideKeyTips);
+ // Add professional press feedback to top-level toolbar buttons.
+ document.querySelectorAll(".buttons button, .theme-toggle, .profile").forEach(btn=>{
+  btn.addEventListener("pointerdown",()=>btn.style.transform="translateY(1px)");
+  ["pointerup","pointerleave","blur"].forEach(ev=>btn.addEventListener(ev,()=>btn.style.transform=""));
+ });
+ // Make workbook tabs show a selected worksheet state and scroll to the matching panel.
+ const sheetTargets={
+  "Order Tracker":document.querySelector(".layout"),
+  "Data View":document.querySelector(".layout"),
+  "Analysis":document.querySelector(".issue-panel")
+ };
+ document.querySelectorAll(".sheet-tabs span").forEach(tab=>{
+  const label=tab.textContent.replace(/[▦▤▥＋]/g,"").trim();
+  if(!label)return;
+  tab.addEventListener("click",()=>{
+   document.querySelectorAll(".sheet-tabs span").forEach(t=>t.classList.remove("active"));
+   tab.classList.add("active");
+   if(label==="＋"){status("Add worksheet preview");return}
+   const target=sheetTargets[label];if(target){target.scrollIntoView({behavior:"smooth",block:"start"});status(label+" worksheet selected")}
+  });
+ });
+ // AutoSave switch is a visual preference only; no file or server data is written.
+ const autoSave=document.querySelector(".toggle");
+ if(autoSave){
+  autoSave.tabIndex=0;autoSave.setAttribute("role","switch");autoSave.setAttribute("aria-checked","true");autoSave.title="Toggle AutoSave visual state";
+  autoSave.style.cursor="pointer";
+  const flip=()=>{const on=autoSave.getAttribute("aria-checked")!=="true";autoSave.setAttribute("aria-checked",String(on));autoSave.style.background=on?"#fff":"#b8bec2";autoSave.querySelector("i").style.marginLeft=on?"auto":"0";status("AutoSave visual state: "+(on?"On":"Off")+" (local HTML does not save to Excel cloud)")};
+  autoSave.addEventListener("click",flip);autoSave.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();flip()}});
+ }
+ // Selection outline on worksheet-like cells, like Excel's active cell.
+ document.querySelectorAll("table tbody td").forEach(td=>{
+  td.tabIndex=0;
+  td.addEventListener("focus",()=>{document.querySelectorAll(".excel-selection").forEach(x=>x.classList.remove("excel-selection"));td.classList.add("excel-selection")});
+ });
+})();
+</script>
+
+</body></html>
