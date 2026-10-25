@@ -765,6 +765,16 @@ body.grey-excel .profile-popover-top .avatar.big{background:linear-gradient(145d
 
 <script>
 const known=[
+[/\b(?:iar|issue\s+(?:already\s+)?resolved|issue\s+solved)\b/i,"Issue Already Resolved"],
+[/\b(?:road\s*block|barricading|vip\s+visit|prime\s+minister\s+visit)\b/i,"Road Block"],
+[/\b(?:dp\s+veh|veh(?:icle)?\s+issue|dp\s+vehicle\s+issue|bike\s+issue|bike\s+breakdown)\b/i,"DP Vehicle Breakdown"],
+[/\b(?:inc|incomplete\s+(?:cx\s+)?address)\b/i,"Incomplete Cx Address"],
+[/\b(?:customer\s+not\s+giving\s+otp|cx\s+not\s+giving\s+otp|customer\s+refusing\s+otp)\b/i,"Customer Not Giving OTP"],
+[/\b(?:dp\s+)?acc(?:ident)?\s+issue\b/i,"DP Met with an Accident/Medical Emergency"],
+[/\b(?:dp\s+)?met\s+with\s+an?\s+accident\b/i,"DP Met with an Accident/Medical Emergency"],
+[/\b(?:mx\s+refusing|merchant\s+refusing)\b/i,"MX Refusing to Give Order"],
+[/\b(?:train\s+order|irctc\s+train\s+order)\b/i,"IRCTC Train Orders"],
+[/\b(?:pickup|pick\s*up)\s+otp\b/i,"Pickup OTP"],
 [/\bopav\s*1st\s*rider\s*fault\b/i,"OPAV 1st Rider Fault"],
 [/\b(?:opav|order picked by another dp|order picked by another rider)\b/i,"Order Picked by Another Rider"],
 [/\bumd\b|\buma\b|unable\s+to\s+mark\s+deliver/i,"Unable to Mark Deliver"],
@@ -887,7 +897,7 @@ const aliases={
  "OPAV":"Order Picked by Another Rider","UMD":"Unable to Mark Deliver","UMA":"Unable to Mark Deliver","CDO":"Cx Denying Order",
  "HOV":"High Order Value","IAR":"Issue Already Resolved","UMD":"Unable to Mark Deliver","OPAV":"Order Picked by Another Rider","MXRF":"MX Refusing to Give Order","NCDP":"Not Connected By DP","HWT":"High Wait Time at MX",
  "CNR":"Cx Not Reachable/Responding","CAM":"Customer Address Mismatch","WUA":"Customer Address Mismatch","CFCA":"Cannot Find Customer Address",
- "ICA":"Incomplete Cx Address","IOOS":"Item Out of Stock","ORI":"Order Related Info","DP":"Delivery Partner","MX":"Merchant"
+ "ICA":"Incomplete Cx Address","INC":"Incomplete Cx Address","IOOS":"Item Out of Stock","ORI":"Order Related Info","DP":"Delivery Partner","MX":"Merchant"
 };
 const cityOnly=/^(delhi|mumbai|pune|kolkata|chennai|kochi|bangalore|bengaluru|hyderabad|ahmedabad|noida|gurgaon|gurugram|jaipur|lucknow|indore|patna|nagpur|surat|thiruvananthapuram|alappuzha|cherthala|bhilwara|shimla|nanded|tundla|ahmednagar|ludhiana|pathankot|tundla|nashik|vadodara|mysore|mangalore|thrissur|kollam|kottayam|palakkad|calicut|kozhikode|ernakulam|trivandrum)$/i;
 // Built-in alias dictionary generated from Issue_Tag_Alias_Master.xlsx (Alias Lookup + Tag Master).
@@ -901,7 +911,7 @@ function workbookTag(value, allowContained=false){
   for(const entry of workbookAliasEntries){
    if(entry.key.length<3)continue;
    const escaped=entry.key.replace(/[.*+?^${}()|[\]\\]/g,"\\$&").replace(/\s+/g,"\\s+");
-   if(new RegExp("(?:^|[^\\p{L}\\p{N])"+escaped+"(?:$|[^\\p{L}\\p{N])","iu").test(key))return entry.tag;
+   if(new RegExp("(?:^|[^\\p{L}\\p{N}])"+escaped+"(?:$|[^\\p{L}\\p{N}])","iu").test(key))return entry.tag;
   }
  }
  return "";
@@ -932,7 +942,7 @@ const canonicalTag=value=>{
 const cityNames=[
 "Thiruvananthapuram","Visakhapatnam","Vijayawada","Bhubaneswar","Aurangabad","Mangaluru","Mangalore","Kozhikode","Thalassery","Pathanamthitta","Kasaragod","Kanhangad","Kottarakkara","Changanassery","Perinthalmanna","Manjeri","Tirur","Palakkad","Ernakulam","Thrissur","Kottayam","Alappuzha","Cherthala","Kollam","Kannur","Kochi","Calicut","Trivandrum",
 "Ahmednagar","Ahmedabad","Bengaluru","Bangalore","Hyderabad","Chandigarh","Coimbatore","Madurai","Tiruchirappalli","Trichy","Tirunelveli","Salem","Erode","Vellore","Thanjavur","Puducherry","Pondicherry","Tirupati","Nellore","Kurnool","Guntur","Warangal","Karimnagar","Mysuru","Mysore","Hubballi","Hubli","Belagavi","Belgaum","Davangere","Tumakuru","Tumkur","Shivamogga","Shimoga","Udupi","Hassan",
-"Delhi","New Delhi","Mumbai","Pune","Nagpur","Nashik","Thane","Navi Mumbai","Kolkata","Howrah","Siliguri","Durgapur","Asansol","Chennai","Gurgaon","Gurugram","Noida","Greater Noida","Ghaziabad","Faridabad","Jaipur","Jodhpur","Udaipur","Kota","Ajmer","Bikaner","Jaisalmer","Jalandhar","Ludhiana","Amritsar","Patiala","Bathinda","Pathankot","Shimla","Manali","Dharamshala","Dehradun","Haridwar","Roorkee","Rudrapur","Bareilly","Moradabad","Meerut","Agra","Mathura","Kanpur","Lucknow","Varanasi","Prayagraj","Allahabad","Gorakhpur","Jhansi","Aligarh","Firozabad","Ayodhya","Patna","Gaya","Muzaffarpur","Bhagalpur","Ranchi","Jamshedpur","Dhanbad","Bokaro","Raipur","Bilaspur","Durg","Bhilai","Indore","Bhopal","Gwalior","Jabalpur","Ujjain","Sagar","Rewa","Surat","Vadodara","Baroda","Rajkot","Bhavnagar","Jamnagar","Junagadh","Gandhinagar","Anand","Vapi","Goa","Panaji","Margao","Vasco","Kochi","Kozhikode","Alappuzha","Cherthala","Bhilwara","Nanded","Tundla","Ahmednagar","Ludhiana","Pathankot"
+"Delhi","New Delhi","Mumbai","Pune","Nagpur","Nashik","Thane","Navi Mumbai","Kolkata","Howrah","Siliguri","Durgapur","Asansol","Chennai","Gurgaon","Gurugram","Noida","Greater Noida","Ghaziabad","Faridabad","Jaipur","Jodhpur","Udaipur","Kota","Ajmer","Bikaner","Jaisalmer","Jalandhar","Ludhiana","Amritsar","Patiala","Bathinda","Pathankot","Shimla","Manali","Dharamshala","Dehradun","Haridwar","Roorkee","Rudrapur","Bareilly","Moradabad","Meerut","Agra","Mathura","Kanpur","Lucknow","Varanasi","Prayagraj","Allahabad","Gorakhpur","Jhansi","Aligarh","Firozabad","Ayodhya","Patna","Gaya","Muzaffarpur","Bhagalpur","Ranchi","Jamshedpur","Dhanbad","Bokaro","Raipur","Bilaspur","Durg","Bhilai","Indore","Bhopal","Gwalior","Jabalpur","Ujjain","Sagar","Rewa","Surat","Vadodara","Baroda","Rajkot","Bhavnagar","Jamnagar","Junagadh","Gandhinagar","Anand","Vapi","Goa","Panaji","Margao","Vasco","Kochi","Kozhikode","Alappuzha","Cherthala","Bhilwara","Nanded","Tundla","Ahmednagar","Ludhiana","Pathankot","Port Blair","Kharagpur","Raniganj","Naharlagun","Gumla","Betul","Katni","Gumla","Muzaffarnagar","Shahdol","Barnala","Kurukshetra","Bela Pratapgarh","Madanapalle","Alipurduar","Sasaram","Hojai","Veraval","Phillaur","Dholpur","Malkapur","Baramati","Beed","Jharsuguda","Modinagar","Yamuna Nagar","Sundarnagar","Faizabad-Ayodhya"
 ].sort((a,b)=>b.length-a.length);
 function extractCity(text, parts, tagidx){
  const normalizeCityText=v=>clean(v)
@@ -1717,54 +1727,103 @@ function update(){if(!$d("dashboard_view"))return;const rows=typeof data!=="unde
   return "";
  }
  function smartIssueFromBody(body,lines,id){
-  // The workbook alias lookup is authoritative. An explicit Issue Type field wins only when it maps cleanly.
-  const explicit=labeledValue(lines,"Issue\\s*Type")||labeledValue(lines,"Issue")||labeledValue(lines,"Tag");
+  // Parse each order from its own line/block. Never reuse a previous row's issue.
+  const local=(Array.isArray(lines)?lines:[String(body||"")]).map(v=>String(v||""));
+  const explicit=labeledValue(local,"Issue\\s*Type")||labeledValue(local,"Issue")||labeledValue(local,"Tag");
   if(explicit){
-   const exact=workbookTag(explicit,false)||canonicalTag(explicit);
-   if(exact)return exact;
-   const contained=workbookTag(explicit,true); if(contained)return contained;
+   const direct=workbookTag(explicit,false)||canonicalTag(explicit);
+   if(direct)return direct;
   }
-  // Remove order IDs, field labels, city names and WhatsApp sender prefixes before matching.
+  // Recognize a canonical issue phrase even when it is embedded in a plain "ID TAG CITY" line.
+  for(const line0 of local){
+   const line=String(line0||"").replace(/\b\d{10}\b/g," ").replace(/^\s*\[[^\]]+\]\s*/," ").trim();
+   const direct=workbookTag(line,false)||canonicalTag(line);
+   if(direct)return direct;
+  }
   const candidates=[];
-  for(const line of lines){
-   if(/^\s*(?:Order\s*Id|City|Issue\s*(?:Type)?|Tag)\s*[:：-]?\s*$/i.test(line))continue;
-   let x=String(line).replace(/\b\d{10}\b/g," ").replace(/^\s*(?:Order\s*Id|City|Issue\s*(?:Type)?|Tag)\s*[:：-]?\s*/i,"");
-   x=x.replace(/^\s*[^:]{1,80}:\s*/,"");
-   for(const c of cityNames){const esc=c.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");x=x.replace(new RegExp("(^|[^A-Za-z])"+esc+"(?=$|[^A-Za-z])","ig")," ")}
-   x=x.replace(/\b(?:@\S+|prepickup|postpickup|md)\b/ig," ").replace(/[\/|,;]+/g," ").replace(/[⭐🌟✨📍🚨✅❌➡️]/gu," ").trim();
-   if(x)candidates.push(x);
+  const addCandidate=value=>{
+   let x=String(value||"").normalize("NFKC").replace(/\b\d{10}\b/g," ")
+    .replace(/^\s*\[[^\]]+\]\s*/," ")
+    .replace(/^\s*[^:\n]{1,100}:\s*/," ")
+    .replace(/^\s*(?:Order\s*Id|City|Issue\s*(?:Type)?|Tag)\s*[:：-]?\s*/i,"")
+    .replace(/[⭐🌟✨📍🚨✅❌➡️]/gu," ").trim();
+   if(!x)return;
+   // Split on common WhatsApp delimiters, while retaining the whole local segment as a fallback.
+   const pieces=x.split(/\s*(?:\/\/|\/|\\+|\|{1,2}|;|\t|→|>|,|\s+[–—-]\s+)\s*/).map(v=>v.trim()).filter(Boolean);
+   for(const piece of pieces){
+    let cleanPiece=piece;
+    for(const c of cityNames){
+     const esc=c.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+     cleanPiece=cleanPiece.replace(new RegExp("(^|[^\\p{L}\\p{N}])"+esc+"(?=$|[^\\p{L}\\p{N}])","giu")," ");
+    }
+    cleanPiece=cleanPiece.replace(/\b(?:prepickup|postpickup|md)\b/ig," ").replace(/\s+/g," ").trim();
+    if(cleanPiece)candidates.push(cleanPiece);
+   }
+   // Also test the full line after removing known cities; useful for formats like "CDO Mumbai".
+   let withoutCities=x;
+   for(const c of cityNames){
+    const esc=c.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    withoutCities=withoutCities.replace(new RegExp("(^|[^\\p{L}\\p{N}])"+esc+"(?=$|[^\\p{L}\\p{N}])","giu")," ");
+   }
+   withoutCities=withoutCities.replace(/\s+/g," ").trim();
+   if(withoutCities)candidates.push(withoutCities);
+  };
+  local.forEach(line=>addCandidate(line));
+  // Exact segment/short-code matches always win; choose the most specific candidate first.
+  const unique=[...new Set(candidates)].sort((a,b)=>b.length-a.length);
+  for(const x of unique){
+   const exact=workbookTag(x,false);
+   if(exact)return exact;
+   const code=canonicalTag(x);
+   if(code)return code;
   }
-  // Longest specific workbook alias first, so generic words such as "delay" do not override a specific tag.
-  for(const x of candidates){const tag=workbookTag(x,true);if(tag)return tag;}
-  for(const x of candidates){const tag=canonicalTag(x);if(tag)return tag;}
+  // Contained aliases are a last resort, after exact and explicit canonical matches.
+  for(const x of unique){
+   const contained=workbookTag(x,true);
+   if(contained)return contained;
+  }
   return "Unknown Issue";
  }
-
  window.process=function(){
   pushUndo();
   const raw=$("raw").value,lines=raw.split(/\r?\n/),records=[];const blocks=[];let current=[];
   const startsMessage=line=>/^\s*\[\d{1,2}:\d{2}(?:\s?[AP]M)?[,\s]+\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}\]/i.test(line);
   const hasWhatsAppHeaders=lines.some(startsMessage);
   if(!hasWhatsAppHeaders){
-   // Plain pasted logs (ID // issue // city, ID / issue / city, or ID issue city):
-   // each order-ID line is its own record. Never infer one issue for every ID in the whole paste.
-   lines.forEach(line=>{
-    if(!/\b\d{10}\b/.test(line))return;
-    const parsed=parseLine(line);
-    if(parsed){
-     const id=parsed.id;
-     // Prefer exact short-code/full-phrase matching within this line; do not carry values across lines.
-     const rest=line.replace(/\b\d{10}\b/g," ").replace(/^\s*[^:]{1,90}:\s*/,"").trim();
-     const segs=rest.split(/\s*(?:\/\/|\||;|\t|\s+\/\s+|>)+\s*/).map(x=>x.trim()).filter(Boolean);
-     // Resolve issue only from this order-ID line using the workbook dictionary; never inherit a prior/default tag.
-     const lineIssue=smartIssueFromBody(line,[line],id);
-     parsed.tag=lineIssue||"Unknown Issue";
-     // Re-evaluate city against this line only; explicit city aliases and the city parser both apply.
-     const foundCity=smartCityFromValue(segs[segs.length-1]||"");
-     if(foundCity)parsed.city=foundCity;
-     parsed.review=parsed.tag==="Unknown Issue"||!canonicalTag(parsed.tag)||!parsed.city||parsed.city==="City Not Provided";
-     records.push(parsed);
+   // Support both compact records (ID // tag // city) and field-per-line records.
+   // Each order ID gets only its own line or nearby labelled fields; tags never carry over.
+   const idRows=lines.map((line,i)=>({line,i,match:line.match(/\b\d{10}\b/)})).filter(x=>x.match);
+   idRows.forEach(({line,i,match},n)=>{
+    const id=match[0];
+    const compactRest=line.replace(id,"").trim();
+    let localLines=[line];
+    if(!compactRest){
+     let lo=Math.max(0,i-3),hi=Math.min(lines.length,i+4);
+     const previousId=idRows[n-1]?.i,nextId=idRows[n+1]?.i;
+     if(previousId!==undefined)lo=Math.max(lo,previousId+1);
+     if(nextId!==undefined)hi=Math.min(hi,nextId);
+     localLines=lines.slice(lo,hi).filter(x=>x.trim());
     }
+    let parsed=parseLine(line)||{id,tag:"Unknown Issue",city:"City Not Provided",review:true};
+    const issue=smartIssueFromBody(localLines.join("\n"),localLines,id);
+    parsed.tag=issue||"Unknown Issue";
+    const cityLabel=labeledValue(localLines,"City");
+    let city=smartCityFromValue(cityLabel);
+    if(!city){
+     for(const l of localLines){
+      const m=l.match(/^\s*City\s*[:：-]\s*(.+)$/i);
+      if(m){city=smartCityFromValue(m[1]);if(city)break}
+     }
+    }
+    if(!city){
+     // Compact line city is usually the final segment; don't treat an issue phrase as a city.
+     const rest=line.replace(/\b\d{10}\b/g," ");
+     const segs=rest.split(/\s*(?:\/\/|\||;|\t|\s+\/\s+|>|→|,)\s*/).map(x=>x.trim()).filter(Boolean);
+     for(const seg of segs.slice().reverse()){city=smartCityFromValue(seg);if(city)break}
+    }
+    if(city)parsed.city=city;
+    parsed.review=parsed.tag==="Unknown Issue"||!canonicalTag(parsed.tag)||!parsed.city||parsed.city==="City Not Provided";
+    records.push(parsed);
    });
   }else{
    lines.forEach(line=>{if(startsMessage(line)&&current.length){blocks.push(current.join("\n"));current=[]}if(line.trim()||current.length)current.push(line)});if(current.length)blocks.push(current.join("\n"));
