@@ -1058,6 +1058,18 @@ async function imageBlob(){
   x.fillStyle="#202a24";x.font="16px Arial";x.textAlign="left";
   [r.id,r.tag,r.city].forEach((v,j)=>{let t=String(v||"");while(x.measureText(t).width>widths[j]-34&&t.length>4)t=t.slice(0,-4)+"…";x.fillText(t,cols[j],y+29)});
  });
+ // Watermark overlay for both clipboard-image and saved-table-image exports.
+ // Draw it after the table content so it is present in the final raster, but keep opacity low enough for legibility.
+ x.save();
+ x.globalAlpha=0.055;
+ x.fillStyle="#174c35";
+ x.textAlign="center";
+ x.textBaseline="middle";
+ x.font="900 112px Arial, sans-serif";
+ x.translate(w/2,h/2);
+ x.rotate(-0.035);
+ x.fillText("ABHIJITH",0,0);
+ x.restore();
  x.strokeStyle="#a6b9ad";x.lineWidth=1.5;x.strokeRect(tx,top,tw,38+row*data.length);
  return new Promise(res=>c.toBlob(res,"image/png"));
 }
@@ -1069,18 +1081,24 @@ $("copyimg").onclick=async()=>{if(!data.length)return alert("Process messages fi
 $("clear").onclick=()=>{$("raw").value="";data=[];render();$("status").textContent="Cleared."};$("add").onclick=()=>{data.push({id:"",tag:"",city:"",review:true});render()};$("remove").onclick=()=>{data=data.filter(r=>/^\d{10}$/.test(r.id));render()};let autoProcessTimer; $("raw").oninput=()=>{$("lines").textContent=$("raw").value.split(/\r?\n/).filter(x=>x.trim()).length+" lines";clearTimeout(autoProcessTimer);autoProcessTimer=setTimeout(process,350)}; $("raw").addEventListener("paste",()=>setTimeout(process,80));
 
 function makeContributionImage(kind){
- const isCity=kind==="city";
+ const isCity=kind==="city", isBucket=kind==="bucket";
  const groups={};
- data.forEach(r=>{
-  const k=clean(isCity?r.city:r.tag)||"Unknown";
-  groups[k]=(groups[k]||0)+1;
- });
- const entries=Object.entries(groups).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+ if(isBucket){
+  const normalize=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/&/g," and ").replace(/[^a-z0-9]+/g," ").trim().replace(/\s+/g," ");
+  const aliasToCanonical={cam:"customer address mismatch",wua:"customer address mismatch",cnr:"cx not reachable responding","cx not responding":"cx not reachable responding","customer not reachable answering":"cx not reachable responding",ioos:"item out of stock",opav:"order picked by another rider",umd:"unable to mark deliver",hwt:"high wait time at mx",ncdp:"not connected by dp",cdo:"cx denying order",cfca:"cannot find customer address",iar:"issue already resolved","mx device issue":"merchant device issue","kitchen issue":"kitchen issues"};
+  const lookup=new Map();document.querySelectorAll("#bucketReferenceRows tr").forEach(tr=>{const cells=tr.querySelectorAll("td");if(cells.length>=2){const key=normalize(cells[0].textContent),b=normalize(cells[1].textContent).toUpperCase();if(key&&["CX","MX","DP"].includes(b))lookup.set(key,b)}});
+  data.forEach(r=>{let key=normalize(r.tag),canonical=aliasToCanonical[key]||key,bucket=lookup.get(canonical)||lookup.get(key)||"Unmapped";groups[bucket]=(groups[bucket]||0)+1});
+  ["CX","MX","DP","Unmapped"].forEach(k=>{if(groups[k]==null)groups[k]=0});
+ }else{
+  data.forEach(r=>{const k=clean(isCity?r.city:r.tag)||"Unknown";groups[k]=(groups[k]||0)+1});
+ }
+ const entries=Object.entries(groups).sort((a,b)=>isBucket?( ["CX","MX","DP","Unmapped"].indexOf(a[0])-["CX","MX","DP","Unmapped"].indexOf(b[0]) ):(b[1]-a[1]||a[0].localeCompare(b[0])));
  const total=entries.reduce((n,e)=>n+e[1],0);
- const title=isCity?"City wise contribution":"Tag wise contribution";
+ const title=isBucket?"Bucket wise contribution":isCity?"City wise contribution":"Tag wise contribution";
  // 4K UHD landscape export (3840 x proportional height).
- const W=3840, scale=3, rowH=120, headerH=390, footerH=54, pad=42;
- const H=headerH+entries.length*rowH+footerH;
+ const W=3840, scale=3, rowH=148, headerH=390, tableHeadH=132, footerH=150, pad=42;
+ // Reserve space for the table header, every data row, and a true bottom safe area.
+ const H=headerH+4+tableHeadH+entries.length*rowH+footerH;
  const canvas=document.createElement("canvas");canvas.width=W;canvas.height=H;
  const ctx=canvas.getContext("2d");
  ctx.fillStyle="#f3f7f4";ctx.fillRect(0,0,W,H);
@@ -1102,48 +1120,51 @@ function makeContributionImage(kind){
  ctx.fillStyle="#e4f4e9";ctx.font="bold 78px Arial";ctx.fillText(title,W/2,310);
  const tableY=headerH+4;
  const left=pad, right=W-pad;
- const numW=180, labelW=1840, countW=480, contributionW=(right-left)-numW-labelW-countW;
+ const numW=170, labelW=1660, countW=390, contributionW=(right-left)-numW-labelW-countW;
  const x0=left, x1=x0+numW, x2=x1+labelW, x3=x2+countW, x4=right;
- ctx.fillStyle="#cdebd6";ctx.fillRect(left,tableY,right-left,132);
- ctx.fillStyle="#123e2b";ctx.font="bold 56px Arial";ctx.textBaseline="middle";
- ctx.textAlign="center";ctx.fillText("#",x0+numW/2,tableY+66);
- ctx.textAlign="left";ctx.fillText(isCity?"City":"Tag / Issue Type",x1+36,tableY+66);
- ctx.textAlign="center";ctx.fillText("Count",x2+countW/2,tableY+66);
- ctx.fillText("Contribution",x3+contributionW/2,tableY+66);
+ ctx.fillStyle="#cdebd6";ctx.fillRect(left,tableY,right-left,tableHeadH);
+ ctx.fillStyle="#123e2b";ctx.font="bold 64px Arial";ctx.textBaseline="middle";
+ ctx.textAlign="center";ctx.fillText("#",x0+numW/2,tableY+tableHeadH/2);
+ ctx.textAlign="left";ctx.fillText(isBucket?"Bucket":isCity?"City":"Tag / Issue Type",x1+36,tableY+tableHeadH/2);
+ ctx.textAlign="center";ctx.fillText("Count",x2+countW/2,tableY+tableHeadH/2);
+ ctx.fillText("Contribution",x3+contributionW/2,tableY+tableHeadH/2);
  entries.forEach(([label,count],i)=>{
-  const y=tableY+132+i*rowH;
+  const y=tableY+tableHeadH+i*rowH;
   ctx.fillStyle=i%2===0?"#ffffff":"#e8f4eb";ctx.fillRect(left,y,right-left,rowH);
   ctx.strokeStyle="#bdd3c4";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(left,y+rowH);ctx.lineTo(right,y+rowH);ctx.stroke();
   ctx.strokeStyle="#c4d7ca";ctx.beginPath();ctx.moveTo(x1,y);ctx.lineTo(x1,y+rowH);ctx.moveTo(x2,y);ctx.lineTo(x2,y+rowH);ctx.moveTo(x3,y);ctx.lineTo(x3,y+rowH);ctx.stroke();
-  ctx.fillStyle="#153a29";ctx.font="bold 52px Arial";ctx.textAlign="center";ctx.fillText(String(i+1),x0+numW/2,y+rowH/2);
-  ctx.fillStyle="#202b24";ctx.font="52px Arial";ctx.textAlign="left";
+  ctx.fillStyle="#153a29";ctx.font="bold 65px Arial";ctx.textAlign="center";ctx.fillText(String(i+1),x0+numW/2,y+rowH/2);
+  ctx.fillStyle="#202b24";ctx.font="bold 65px Arial";ctx.textAlign="left";
   let display=label;while(ctx.measureText(display).width>labelW-72&&display.length>3)display=display.slice(0,-2)+"…";
   ctx.fillText(display,x1+36,y+rowH/2);
-  ctx.fillStyle="#173e2a";ctx.font="bold 54px Arial";ctx.textAlign="center";ctx.fillText(String(count),x2+countW/2,y+rowH/2);
+  ctx.fillStyle="#173e2a";ctx.font="bold 68px Arial";ctx.textAlign="center";ctx.fillText(String(count),x2+countW/2,y+rowH/2);
   const pct=total?count/total*100:0;
-  const barX=x3+48, barY=y+rowH/2-24, barW=contributionW-220, barH=48;
-  ctx.fillStyle="#d8e1dc";ctx.fillRect(barX,barY,barW,barH);
+  const barX=x3+28, barY=y+rowH/2-34, barW=contributionW-260, barH=68;
+  ctx.fillStyle="#c6d4cb";ctx.fillRect(barX,barY,barW,barH);
   // Conditional formatting: high contribution = red, middle = yellow, low = green.
   const maxPct=entries.length?Math.max(...entries.map(e=>total?e[1]/total*100:0)):0;
   const ratio=maxPct?pct/maxPct:0;
-  const barColor=ratio>=0.75?"#d93025":ratio>=0.35?"#f9ab00":"#188038";
+  const barColor=isBucket?(label==="CX"?"#4779c4":label==="MX"?"#d99a36":label==="DP"?"#188038":"#89939b"):(ratio>=0.75?"#d93025":ratio>=0.35?"#f9ab00":"#188038");
   const barGrad=ctx.createLinearGradient(barX,0,barX+barW,0);barGrad.addColorStop(0,barColor);barGrad.addColorStop(1,barColor);
-  ctx.fillStyle=barGrad;ctx.fillRect(barX,barY,barW*pct/100,barH);
-  ctx.fillStyle="#173e2a";ctx.font="bold 50px Arial";ctx.textAlign="right";ctx.fillText(pct.toFixed(1)+"%",x4-28,y+rowH/2);
+  ctx.fillStyle=barGrad;ctx.fillRect(barX,barY,barW*(maxPct?pct/maxPct:0),barH);
+  ctx.fillStyle="#173e2a";ctx.font="bold 65px Arial";ctx.textAlign="right";ctx.fillText(pct.toFixed(1)+"%",x4-20,y+rowH/2);
  });
  // Single centered, subtle document watermark. Drawn once above the table for consistent visibility.
  ctx.save();
- ctx.globalAlpha=0.075;
+ ctx.globalAlpha=0.035;
  ctx.fillStyle="#174c35";
  ctx.textAlign="center";
  ctx.textBaseline="middle";
- ctx.font="600 230px 'Aptos', 'Segoe UI', Arial, sans-serif";
- ctx.letterSpacing="2px";
- ctx.translate(W/2, headerH+(H-headerH-footerH)/2);
- ctx.fillText("Abhijith",0,0);
+ ctx.font="900 300px 'Aptos Display', 'Segoe UI', Arial, sans-serif";
+ ctx.letterSpacing="10px";
+ ctx.translate(W/2, H/2);
+ ctx.rotate(-0.035);
+ ctx.fillText("ABHIJITH",0,0);
  ctx.restore();
  ctx.strokeStyle="#b49a4a";ctx.lineWidth=8;ctx.strokeRect(24,24,W-48,H-48);
  ctx.strokeStyle="#08713e";ctx.lineWidth=5;ctx.strokeRect(36,36,W-72,H-72);
+ // Finish the report with a restrained footer rule and balanced bottom margin.
+ ctx.strokeStyle="#d9e6dc";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(120,H-footerH/2);ctx.lineTo(W-120,H-footerH/2);ctx.stroke();
  return new Promise(resolve=>canvas.toBlob(resolve,"image/png"));
 }
 async function copyContributionImage(kind){
@@ -1151,7 +1172,7 @@ async function copyContributionImage(kind){
  try{
   const blob=await makeContributionImage(kind);
   await navigator.clipboard.write([new ClipboardItem({"image/png":blob})]);
-  const status=$("status");if(status)status.textContent=(kind==="city"?"City-wise":"Issue-wise")+" contribution image copied to clipboard.";
+  const status=$("status");if(status)status.textContent=(kind==="city"?"City-wise":kind==="bucket"?"Bucket-wise":"Issue-wise")+" contribution image copied to clipboard.";
  }catch(err){
   alert("Clipboard image access was blocked by this browser. Open the tracker in a supported browser context (HTTPS or localhost) and try again.");
  }
@@ -1161,8 +1182,10 @@ async function copyContributionImage(kind){
 document.addEventListener("DOMContentLoaded",()=>{
  const issueBtn=document.getElementById("copyIssueImage");
  const cityBtn=document.getElementById("copyCityImage");
+ const bucketBtn=document.getElementById("copyBucketImage");
  if(issueBtn)issueBtn.addEventListener("click",()=>copyContributionImage("issue"));
  if(cityBtn)cityBtn.addEventListener("click",()=>copyContributionImage("city"));
+ if(bucketBtn)bucketBtn.addEventListener("click",()=>copyContributionImage("bucket"));
 });
 
 </script>
@@ -1559,13 +1582,16 @@ function update(){if(!$d("dashboard_view"))return;const rows=typeof data!=="unde
    if(button){const old=button.textContent;button.textContent="✓ Copied 4K";setTimeout(()=>button.textContent=old,1800)}
  }
  function watermark(ctx,w,h,grey){
+   // One large, centered, bold watermark with very low opacity and a restrained diagonal tilt.
    ctx.save();
-   ctx.globalAlpha=.48;
-   ctx.fillStyle=grey?"#555d63":"#426b52";
-   ctx.textAlign="right";
-   ctx.textBaseline="bottom";
-   ctx.font=`500 ${Math.max(18,Math.round(w*.009))}px Aptos, Segoe UI, Arial`;
-   ctx.fillText("Abhijith",w-28,h-20);
+   ctx.globalAlpha=.035;
+   ctx.fillStyle=grey?"#41484d":"#174c35";
+   ctx.textAlign="center";
+   ctx.textBaseline="middle";
+   ctx.font=`900 ${Math.max(100,Math.min(300,Math.round(w*.075)))}px Aptos Display, Segoe UI, Arial`;
+   ctx.translate(w/2,h/2);
+   ctx.rotate(-.035);
+   ctx.fillText("ABHIJITH",0,0);
    ctx.restore();
    ctx.save();
    ctx.strokeStyle=grey?"#697177":"#b49a4a";
@@ -1597,7 +1623,7 @@ function update(){if(!$d("dashboard_view"))return;const rows=typeof data!=="unde
    const kpis=[["ORDER IDS",$d("dashOrders").textContent],["UNIQUE TAGS",$d("dashTags").textContent],["CITIES",$d("dashCities").textContent],["NEEDS REVIEW",$d("dashReview").textContent]];kpis.forEach((k,i)=>{const xx=70+i*570;x.fillStyle="#fff";x.fillRect(xx,220,530,150);x.strokeStyle=grey?"#c5cacf":"#cbdacf";x.strokeRect(xx,220,530,150);x.fillStyle="#6a786f";x.font="24px Aptos,Arial";x.fillText(k[0],xx+25,260);x.fillStyle=colors[0];x.font="bold 58px Aptos,Arial";x.fillText(k[1],xx+25,330)});
    function copyChart(id,xx,yy,ww,hh,title){const cv=$d(id);x.fillStyle="#fff";x.fillRect(xx,yy,ww,hh);x.strokeStyle=grey?"#c5cacf":"#d4ded7";x.strokeRect(xx,yy,ww,hh);x.fillStyle=grey?"#30363a":"#24382b";x.font="bold 30px Aptos,Arial";x.fillText(title,xx+24,yy+42);if(cv)x.drawImage(cv,xx+12,yy+60,ww-24,hh-80)}
    copyChart("dashIssueChart",70,410,1100,610,"ISSUE-WISE CONTRIBUTION");copyChart("dashCityChart",1230,410,1100,610,"CITY-WISE CONTRIBUTION");copyChart("dashDonutChart",70,1060,2260,540,"ISSUE MIX");
-   x.globalAlpha=.07;x.translate(W/2,H/2);x.rotate(-.06);x.fillStyle=grey?"#41484d":"#174c35";x.textAlign="center";x.font="600 140px Aptos,Arial";x.fillText("Abhijith",0,0);x.globalAlpha=1;x.strokeStyle=grey?"#697177":"#b49a4a";x.lineWidth=4;x.strokeRect(20,20,W-40,H-40);
+   x.save();x.globalAlpha=.035;x.translate(W/2,H/2);x.rotate(-.035);x.fillStyle=grey?"#41484d":"#174c35";x.textAlign="center";x.textBaseline="middle";x.font="900 190px Aptos Display,Segoe UI,Arial";x.fillText("ABHIJITH",0,0);x.restore();x.strokeStyle=grey?"#697177":"#b49a4a";x.lineWidth=4;x.strokeRect(20,20,W-40,H-40);
    const blob=await new Promise(r=>c.toBlob(r,"image/png"));await navigator.clipboard.write([new ClipboardItem({"image/png":blob})]);copy.textContent="✓ Dashboard Copied";setTimeout(()=>copy.textContent="▧ Copy Dashboard as Image",1800);
   }catch(err){alert("Copying the dashboard image was blocked by this browser. Open the tracker in a supported browser context (HTTPS or localhost).")}});
  // Integrate with existing workbook navigation.
@@ -1988,7 +2014,7 @@ function update(){if(!$d("dashboard_view"))return;const rows=typeof data!=="unde
  const oldSummaries=window.summaries;window.summaries=function(){if(typeof oldSummaries==='function')oldSummaries();render()};
  const originalRender=window.render;window.render=function(){if(typeof originalRender==='function')originalRender();render()};
  function wrapDataEdits(){document.querySelectorAll('#bucketReferenceRows tr').forEach(tr=>{const cells=tr.querySelectorAll('td');if(cells.length>1){const key=norm(cells[0].textContent);const bucket=norm(cells[1].textContent).toUpperCase();if(key&&['CX','MX','DP'].includes(bucket)){} }});render()}
- const btn=$id('copyBucketImage');if(btn)btn.addEventListener('click',async()=>{if(!Array.isArray(data)||!data.length){alert('Process messages first.');return}try{const W=3840,counts=getCounts(),total=data.length,rows=[['CX',counts.CX],['MX',counts.MX],['DP',counts.DP],['Unmapped',counts.Unmapped]],H=900;const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.fillStyle='#f3f7f4';x.fillRect(0,0,W,H);x.fillStyle='#075e32';x.fillRect(0,0,W,180);x.fillStyle='#f3d477';x.font='bold 34px Arial';x.fillText('REAL TIME ORDER ID TRACKER  ·  ANALYSIS',100,62);x.fillStyle='#fff';x.font='bold 68px Arial';x.fillText('BUCKET-WISE CONTRIBUTION',100,137);x.fillStyle='#24352a';x.font='32px Arial';x.fillText('Total parsed records: '+total+'   |   Generated: '+new Date().toLocaleString(),100,245);const top=300,rowH=112,labelX=130,countX=980,barX=1400,barW=1900,pctX=3400;rows.forEach((r,i)=>{const y=top+i*rowH;x.fillStyle=i%2?'#edf3ef':'#fff';x.fillRect(90,y,W-180,rowH-12);x.fillStyle='#20392a';x.font='bold 44px Arial';x.fillText(r[0],labelX,y+62);x.font='40px Arial';x.fillText(String(r[1]),countX,y+62);x.fillStyle='#dce6df';x.fillRect(barX,y+25,barW,42);const pct=r[1]/Math.max(total,1);x.fillStyle=r[0]==='CX'?'#4779c4':r[0]==='MX'?'#d99a36':r[0]==='DP'?'#238653':'#9aa1a7';x.fillRect(barX,y+25,barW*pct,42);x.fillStyle='#24352a';x.font='bold 38px Arial';x.textAlign='right';x.fillText((pct*100).toFixed(1)+'%',pctX,y+62);x.textAlign='left'});x.fillStyle='#5d6e62';x.font='26px Arial';x.fillText('Bucket mapping is based on the supplied issue reference. Unmapped records require review.',100,790);x.fillStyle='#8b7a42';x.font='italic 30px Georgia';x.textAlign='right';x.fillText('Abhijith',W-100,850);x.textAlign='left';const blob=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error('Canvas export failed')),'image/png'));if(navigator.clipboard&&window.ClipboardItem){await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);btn.textContent='✓ Bucket Image Copied';setTimeout(()=>btn.textContent='Copy Bucket-wise Image · 4K',1800)}else{const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='bucket-wise-contribution-4k.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);btn.textContent='PNG downloaded'}}catch(e){alert('Could not copy the image. Open the tracker in Chrome or Edge over HTTPS/localhost and allow clipboard access.')}});
+
  render();
 })();
 </script>
